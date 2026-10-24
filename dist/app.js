@@ -1,3 +1,4 @@
+import {isUnlocked,unlockedThrough} from './progression.js';
 import {STARTING_BOLTS,spendAttempt,rewardBolt,moveOutcome} from './economy.js';
 import {levels,initial,moves,apply,solve,won} from './engine.js';
 const $=id=>document.getElementById(id);
@@ -17,12 +18,13 @@ try{if(!localStorage.getItem('pocket-workshop-v2')){const old=JSON.parse(localSt
 let completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<levels.length):[];
 let level=Number.isInteger(saved.level)&&saved.level>=0&&saved.level<levels.length?saved.level:0,state,history=[],selected=null,hinted=null,drag=null;
 let bolts=Number.isInteger(saved.bolts)?Math.max(0,saved.bolts):STARTING_BOLTS,used=0,attempts=saved.attempts||{},failed=false;
+let navPage=0;
 const budget=i=>levels[i].moveLimit??levels[i].par*4+6;
 function rememberAttempt(){attempts[level]={state,used};persist();}
 function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each failed repair costs 1 bolt.`;$('demoAd').disabled=bolts>=STARTING_BOLTS;$('shopDialog').showModal();}
 function fail(){if(failed)return;failed=true;bolts=spendAttempt(bolts);delete attempts[level];persist();render();$('failText').textContent=bolts?`You used all your moves. One bolt lost; ${bolts} remaining. Try a different approach.`:'You used your last bolt. Earn another through the rewarded-ad demo, or view the shop preview.';$('retry').disabled=bolts===0;$('failDialog').showModal();}
 function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level,bolts,attempts}));}catch{}}
-function load(i){level=i;state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
+function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
 function say(t){$('message').textContent=t;}
 function render(){
  $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
@@ -31,8 +33,8 @@ function render(){
  const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
  $('collected').textContent=`${completed.length} / ${levels.length} restored`;
  $('board').innerHTML=state.map(([x,y,n,d],i)=>`<button class="piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}" data-i="${i}" aria-label="${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}" aria-pressed="${selected===i}" style="left:calc(${x*100/6}% + 4px);top:calc(${y*100/6}% + 4px);width:calc(${(d==='h'?n:1)*100/6}% - 8px);height:calc(${(d==='v'?n:1)*100/6}% - 8px);background:${colors[i%colors.length]}">${i===0?kit:part}</button>`).join('');
- const pageStart=Math.floor(level/20)*20; $('chapterNav').innerHTML=Array.from({length:Math.ceil(levels.length/20)},(_,j)=>`<button data-chapter="${j}" class="${j===Math.floor(level/20)?'active':''}" aria-label="Levels ${j*20+1} to ${Math.min(levels.length,j*20+20)}">${j*20+1}–${Math.min(levels.length,j*20+20)}</button>`).join('');
- $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j;return `<button data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}>${completed.includes(i)?'✓':i+1}</button>`}).join('');
+ const pageStart=navPage*20; $('chapterNav').innerHTML=Array.from({length:Math.ceil(levels.length/20)},(_,j)=>`<button data-chapter="${j}" class="${j===navPage?'active':''}" aria-label="Levels ${j*20+1} to ${Math.min(levels.length,j*20+20)}">${j*20+1}–${Math.min(levels.length,j*20+20)}</button>`).join('');
+ $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}>${locked?'🔒 '+(i+1):completed.includes(i)?'✓':i+1}</button>`}).join('');
  const vertical=selected!==null&&state[selected][3]==='v';$('back').textContent=vertical?'↑':'←';$('forward').textContent=vertical?'↓':'→';
  $('selectedLabel').textContent=selected===null?'Select a part to move':selected===0?'Brass kit · slide to the exit':`Part ${selected} · ${vertical?'up or down':'left or right'}`;
  $('back').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta<0);$('forward').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta>0);
@@ -41,7 +43,7 @@ function move(m){if(failed)return false;if(bolts===0){showShop();return false;}i
  const cost=Math.abs(m.delta),nextState=apply(state,m),outcome=moveOutcome(used,cost,budget(level),won(nextState));
  if(used+cost<=budget(level)){history.push(state);state=nextState;}used=Math.min(budget(level),used+cost);hinted=null;rememberAttempt();render();
  if(outcome==='won')finish();else if(outcome==='failed')fail();else say('A little more room. Keep going.');return true;}
-function finish(){delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All 100 treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life. Your workshop is looking a little brighter.`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
+function finish(){delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All 100 treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life.${level+1<levels.length?' Repair '+(level+2)+' is now unlocked.':''}`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
 function step(sign){if(selected===null)return;move({i:selected,delta:sign});}
 function select(i){selected=i;hinted=null;render();}
 const board=$('board');
@@ -53,9 +55,9 @@ document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]'
 function undo(){if(history.length&&!failed){state=history.pop();hinted=null;rememberAttempt();render();say('Position undone. Used moves are not refunded.');}}
 function reset(){if(failed){if(bolts)load(level);else showShop();return;}if(!used){load(level);return;} $('resetDialog').showModal();}
 function hint(){const path=solve(state);if(!path?.length){say(won(state)?'Repair complete! Choose another puzzle below.':'Try resetting this repair for a fresh start.');return;}const m=path[0];selected=m.i;hinted=m.i;render();const dir=state[m.i][3]==='h'?(m.delta>0?'right':'left'):(m.delta>0?'down':'up');say(`Slide ${m.i===0?'the brass kit':'highlighted part '+m.i} ${dir} ${Math.abs(m.delta)} space${Math.abs(m.delta)===1?'':'s'}.`);}
-function next(){ $('winDialog').close();load(completed.length===levels.length?0:(()=>{for(let k=1;k<=levels.length;k++){let i=(level+k)%levels.length;if(!completed.includes(i))return i;}return 0;})());}
+function next(){ $('winDialog').close();load(level+1<levels.length?level+1:0);}
 $('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;$('back').onclick=()=>step(-1);$('forward').onclick=()=>step(1);
-$('chapterNav').onclick=e=>{const b=e.target.closest('[data-chapter]');if(b)load(Number(b.dataset.chapter)*20);};
+$('chapterNav').onclick=e=>{const b=e.target.closest('[data-chapter]');if(b){navPage=Number(b.dataset.chapter);render();}};
 $('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)load(Number(b.dataset.level));};
 $('help').onclick=()=>$('helpDialog').showModal();document.querySelector('.close').onclick=()=>$('helpDialog').close();document.querySelector('.close-help').onclick=()=>$('helpDialog').close();
 $('boltBalance').onclick=showShop;

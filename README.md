@@ -25,3 +25,7 @@ The first 20 levels have minimum solutions of 2 through 21 slides. The 80 additi
 Players start with 5 bolts. The first 20 levels allow `4 × minimum slides + 6` square moves. Advanced levels use a verified solution’s square moves plus a shrinking buffer (20 down to 5). Dragging through multiple squares consumes that many moves, so drag and arrow controls have the same allowance. Running out costs one bolt; winning on the last allowed move succeeds. Undo does not refund moves. Resetting a started repair costs one bolt after confirmation. Attempts and remaining moves persist across reloads and level switches on this device. At zero bolts gameplay is blocked until a reward is earned. The optional-ad demo gives one free bolt up to five; it does not show ads or earn revenue. The shop is a disabled preview, without pricing or billing. Native ad SDK integration, verified rewards and platform purchases remain future work.
 
 The 100-level picker uses five pages of 20 repairs. Original 20-level progress is preserved.
+
+## Sequential unlocking
+
+Level 1 starts unlocked. Finish every preceding repair to unlock the next one. Completed repairs can be replayed. Level pages can be browsed, but locked repairs are disabled and guarded by the load function, including when restoring a saved level. Existing completions are retained; gaps must be finished before later levels become playable.

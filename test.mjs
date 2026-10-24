@@ -1,4 +1,12 @@
 import assert from 'node:assert/strict';
+import {isUnlocked,unlockedThrough} from './dist/progression.js';
+assert(isUnlocked(0,[],100));assert(!isUnlocked(1,[],100));
+assert(isUnlocked(1,[0],100));assert(!isUnlocked(2,[0],100));
+assert(!isUnlocked(99,[98],100),'Out-of-order saves cannot skip preceding repairs');
+assert.equal(unlockedThrough([0,2,99],100),1);
+assert(isUnlocked(0,[0,1],100),'Completed levels remain replayable');
+assert(!isUnlocked(-1,[],100));assert(!isUnlocked(100,Array.from({length:100},(_,i)=>i),100));
+assert.equal(unlockedThrough(Array.from({length:100},(_,i)=>i),100),99);
 import {levels,initial,moves,apply,solve,won} from './dist/engine.js';
 import {STARTING_BOLTS,spendAttempt,rewardBolt,moveOutcome} from './dist/economy.js';
 assert.equal(STARTING_BOLTS,5);

@@ -7,3 +7,5 @@
 .bolt-balance{border:1px solid #c9b682;background:#f1e5c3;padding:9px 13px;border-radius:20px;font-size:12px;white-space:nowrap}.shop-note{font-size:11px}.bolt-pack{padding:18px;border:1px solid #dedcca;border-radius:10px;margin-top:20px;display:grid;gap:12px}.bolt-pack button{font-size:11px;border:0;background:#e3e5d8;border-radius:6px;padding:10px}.stats b{font-size:14px}@media(max-width:650px){.bolt-balance{font-size:10px;padding:8px}.quiet{font-size:10px}.quiet span{display:none}}
 
 .chapter-nav{display:flex;gap:5px;flex-wrap:wrap;margin-top:18px}.chapter-nav button{flex:1;padding:8px 4px;font-size:10px;border:1px solid #d4dbca;border-radius:6px;background:transparent;white-space:nowrap}.chapter-nav button.active{background:#e3e9d8}.level-nav{margin-top:9px;padding-top:12px}
+
+.level-nav button:disabled{opacity:1;color:#92978a;background:#eeeee6;border-style:dashed;font-size:9px;cursor:not-allowed}.level-nav button{min-width:32px;width:auto;padding:0 6px}
