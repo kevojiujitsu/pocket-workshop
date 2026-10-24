@@ -9,6 +9,13 @@ assert(!isUnlocked(-1,[],100));assert(!isUnlocked(100,Array.from({length:100},(_
 assert.equal(unlockedThrough(Array.from({length:100},(_,i)=>i),100),99);
 import {levels,initial,moves,apply,solve,won} from './dist/engine.js';
 import {STARTING_BOLTS,spendAttempt,rewardBolt,moveOutcome} from './dist/economy.js';
+import {STARTING_UNDOS,spendUndo,UNDO_PACKS} from './dist/economy.js';
+let undoCredits=STARTING_UNDOS;
+assert.equal(undoCredits,3);
+for(let i=0;i<3;i++)undoCredits=spendUndo(undoCredits);
+assert.equal(undoCredits,0);assert.equal(spendUndo(undoCredits),null,'No undo at zero balance');
+assert.equal(spendUndo(12),11,'Purchased credits must stack beyond starting balance');
+assert.deepEqual(UNDO_PACKS.map(p=>[p.quantity,p.previewPrice]),[[1,'$0.99'],[3,'$1.99']]);
 assert.equal(STARTING_BOLTS,5);
 assert.equal(spendAttempt(1),0);assert.equal(spendAttempt(0),0);
 assert.equal(rewardBolt(0),1);assert.equal(rewardBolt(5),5);
