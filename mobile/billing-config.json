@@ -7,39 +7,39 @@
       "kind": "undo",
       "quantity": 1,
       "appleId": "com.kevthedev.pocketworkshop.undo1",
-      "googleId": "",
+      "googleId": "com.kevthedev.pocketworkshop.undo1",
       "intendedUsdPrice": "0.99"
     },
     {
       "key": "undo_3",
       "kind": "undo",
       "quantity": 3,
-      "appleId": "",
-      "googleId": "",
+      "appleId": "com.kevthedev.pocketworkshop.undo3",
+      "googleId": "com.kevthedev.pocketworkshop.undo3",
       "intendedUsdPrice": "1.99"
     },
     {
       "key": "bolts_5",
       "kind": "bolt",
       "quantity": 5,
-      "appleId": "",
-      "googleId": "",
+      "appleId": "com.kevthedev.pocketworkshop.bolts5",
+      "googleId": "com.kevthedev.pocketworkshop.bolts5",
       "intendedUsdPrice": "0.99"
     },
     {
       "key": "bolts_12",
       "kind": "bolt",
       "quantity": 12,
-      "appleId": "",
-      "googleId": "",
+      "appleId": "com.kevthedev.pocketworkshop.bolts12",
+      "googleId": "com.kevthedev.pocketworkshop.bolts12",
       "intendedUsdPrice": "1.99"
     },
     {
       "key": "bolts_35",
       "kind": "bolt",
       "quantity": 35,
-      "appleId": "",
-      "googleId": "",
+      "appleId": "com.kevthedev.pocketworkshop.bolts35",
+      "googleId": "com.kevthedev.pocketworkshop.bolts35",
       "intendedUsdPrice": "4.99"
     }
   ],

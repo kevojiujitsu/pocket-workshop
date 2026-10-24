@@ -24,3 +24,9 @@ From this directory run `npm ci` and `npm run build`. Set `POCKET_APP_ID` to the
 Do not enable browser preview purchases or deploy merchant secrets to the private Site.
 
 Android release compilation verified with C:/Users/kwjiu/.jdks/jbr-21.0.11 and the installed Android SDK. The default Android Studio JBR is Java 25 and is incompatible with this Gradle version. iOS project generated, but not compiled on Windows. Upload signing materials are outside the Git checkout in the task work/pocket-signing directory; passwords are protected with Windows DPAPI and not in source.
+
+## Store setup checkpoint (October 24, 2026)
+
+Both app drafts exist. All five consumable IDs in billing-config.json have been created in both stores. Apple base prices are configured: undo1 and bolts5 $0.99, undo3 and bolts12 $1.99, bolts35 $4.99. Apple availability, localized display descriptions and review screenshots are still pending. Google purchase options are saved as drafts (standard, Buy) with USD base pricing and regional conversion, not activated. A signed Android version 1 (1.0), target API 36 bundle with BILLING permission is uploaded and saved in the closed Alpha draft; it has NOT been rolled out. iOS has not been compiled or uploaded. Receipt-validation endpoints, player authentication, authoritative wallet spending and native game shop wiring are NOT implemented. Purchases remain disabled.
+
+Private GitHub repository: https://github.com/kevojiujitsu/pocket-workshop (main). Do not commit signing keys, DPAPI password files or private store API credentials.
