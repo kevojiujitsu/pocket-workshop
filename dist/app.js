@@ -27,16 +27,38 @@ function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each
 function fail(){if(failed)return;failed=true;bolts=spendAttempt(bolts);delete attempts[level];persist();render();$('failText').textContent=bolts?`You used all your moves. One bolt lost; ${bolts} remaining. Try a different approach.`:'You used your last bolt. Earn another through the rewarded-ad demo, or view the shop preview.';$('retry').disabled=bolts===0;$('failDialog').showModal();}
 function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level,bolts,attempts,undoBalance,resetsUsed:[...resetsUsed]}));}catch{}}
 function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=Array.isArray(attempts[i]?.history)?attempts[i].history:[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
+let activeScreen='collection';
+function showScreen(name){
+ activeScreen=name;
+ for(const [key,id] of Object.entries({collection:'collectionScreen',play:'playScreen',transition:'transitionScreen'}))$(id).hidden=key!==name;
+ document.body.dataset.screen=name;
+ selected=null;drag=null;
+ window.scrollTo({top:0,behavior:'instant'});
+ const heading=name==='transition'?$('transitionTitle'):name==='play'?$('levelName'):$('continueGame');
+ heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});
+}
+function prepareRepair(i){
+ if(!isUnlocked(i,completed,levels.length))return;
+ load(i);
+ $('transitionChapter').textContent=`REPAIR ${String(i+1).padStart(2,'0')} / ${levels.length}`;
+ $('transitionArt').innerHTML=svg(levels[i].icon);
+ $('transitionTitle').textContent=levels[i].name;
+ $('transitionText').textContent=`A ${levels[i].reward.toLowerCase()} with a little more life to give. Make room for the brass kit, and bring it home.`;
+ $('transitionDetail').textContent=`${budget(i)} moves · ${resetsUsed.has(i)?'Reset already used':'1 reset available'} · No timer`;
+ $('beginRepair').textContent=attempts[i]?'Continue this repair →':'To the workbench →';
+ showScreen('transition');
+}
 function say(t){$('message').textContent=t;}
 function render(){
  $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
  $('difficulty').textContent=`${(level<20?['Beginner','Apprentice','Craftsperson','Master'][Math.floor(level/5)]:['Expert','Specialist','Virtuoso','Grandmaster'][Math.floor((level-20)/20)])} · ${levels[level].par} minimum slides`;
  $('moveCount').textContent=`${used} / ${budget(level)}`;$('undo').disabled=!history.length||failed; $('reset').disabled=resetsUsed.has(level)||failed||used===0;$('resetLabel').textContent=resetsUsed.has(level)?'Reset · 0':'Reset · 1'; $('undoLabel').textContent=`Undo · ${undoBalance}`; $('undoStatus').textContent=`${undoBalance} undos remaining · shared across all levels`;  $('boltBalance').textContent=`⬢ ${bolts} bolts`; $('movesLeft').textContent=`${Math.max(0,budget(level)-used)} moves left`; 
  const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
+ $('continueGame').textContent=`Continue repair ${level+1} →`;
  $('collected').textContent=`${completed.length} / ${levels.length} restored`;
  $('board').innerHTML=state.map(([x,y,n,d],i)=>`<button class="piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}" data-i="${i}" aria-label="${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}" aria-pressed="${selected===i}" style="left:calc(${x*100/6}% + 4px);top:calc(${y*100/6}% + 4px);width:calc(${(d==='h'?n:1)*100/6}% - 8px);height:calc(${(d==='v'?n:1)*100/6}% - 8px);background:${colors[i%colors.length]}">${i===0?kit:part}</button>`).join('');
  const pageStart=navPage*20; $('chapterNav').innerHTML=Array.from({length:Math.ceil(levels.length/20)},(_,j)=>`<button data-chapter="${j}" class="${j===navPage?'active':''}" aria-label="Levels ${j*20+1} to ${Math.min(levels.length,j*20+20)}">${j*20+1}–${Math.min(levels.length,j*20+20)}</button>`).join('');
- $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}>${locked?'🔒 '+(i+1):completed.includes(i)?'✓':i+1}</button>`}).join('');
+ $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}><span class="level-number">${locked?'🔒 ':completed.includes(i)?'✓ ':''}${String(i+1).padStart(2,'0')}</span><span class="level-card-name">${l.name}</span><span class="level-card-status">${locked?'Locked':completed.includes(i)?'Restored':'Ready to repair'}</span></button>`}).join('');
  const vertical=selected!==null&&state[selected][3]==='v';$('back').textContent=vertical?'↑':'←';$('forward').textContent=vertical?'↓':'→';
  $('selectedLabel').textContent=selected===null?'Select a part to move':selected===0?'Brass kit · slide to the exit':`Part ${selected} · ${vertical?'up or down':'left or right'}`;
  $('back').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta<0);$('forward').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta>0);
@@ -53,14 +75,14 @@ board.addEventListener('pointerdown',e=>{const piece=e.target.closest('[data-i]'
 board.addEventListener('pointerup',e=>{if(!drag)return;const {i,x,y}=drag;drag=null;const d=state[i][3],distance=d==='h'?e.clientX-x:e.clientY-y,cell=board.clientWidth/6;let delta=Math.round(distance/cell);if(delta){const legal=moves(state).filter(m=>m.i===i&&Math.sign(m.delta)===Math.sign(delta));const max=Math.max(0,...legal.map(m=>Math.abs(m.delta)));delta=Math.sign(delta)*Math.min(Math.abs(delta),max);if(delta)move({i,delta});else say('That path is blocked. Move another part first.');}else render();});
 board.addEventListener('pointercancel',()=>{drag=null;});
 board.addEventListener('click',e=>{const piece=e.target.closest('[data-i]');if(piece&&e.detail===0)select(Number(piece.dataset.i));});
-document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||selected===null)return;const d=state[selected][3],sign=(d==='h'?{ArrowLeft:-1,ArrowRight:1}:{ArrowUp:-1,ArrowDown:1})[e.key];if(sign){e.preventDefault();step(sign);board.querySelector(`[data-i="${selected}"]`)?.focus();}});
+document.addEventListener('keydown',e=>{if(activeScreen!=='play'||document.querySelector('dialog[open]')||selected===null)return;const d=state[selected][3],sign=(d==='h'?{ArrowLeft:-1,ArrowRight:1}:{ArrowUp:-1,ArrowDown:1})[e.key];if(sign){e.preventDefault();step(sign);board.querySelector(`[data-i="${selected}"]`)?.focus();}});
 function undo(){if(!history.length||failed)return;const balance=spendUndo(undoBalance);if(balance===null){showShop();return;}const previous=history.pop();state=previous.state;used=previous.used;undoBalance=balance;hinted=null;rememberAttempt();render();say(`Last move undone and moves restored. ${undoBalance} undo${undoBalance===1?'':'s'} remaining.`);}
 function reset(){if(resetsUsed.has(level)||failed||used===0)return;$('resetDialog').showModal();}
 function hint(){const path=solve(state);if(!path?.length){say(won(state)?'Repair complete! Choose another puzzle below.':'Try resetting this repair for a fresh start.');return;}const m=path[0];selected=m.i;hinted=m.i;render();const dir=state[m.i][3]==='h'?(m.delta>0?'right':'left'):(m.delta>0?'down':'up');say(`Slide ${m.i===0?'the brass kit':'highlighted part '+m.i} ${dir} ${Math.abs(m.delta)} space${Math.abs(m.delta)===1?'':'s'}.`);}
-function next(){ $('winDialog').close();load(level+1<levels.length?level+1:0);}
+function next(){ $('winDialog').close();prepareRepair(level+1<levels.length?level+1:0);}
 $('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;$('back').onclick=()=>step(-1);$('forward').onclick=()=>step(1);
 $('chapterNav').onclick=e=>{const b=e.target.closest('[data-chapter]');if(b){navPage=Number(b.dataset.chapter);render();}};
-$('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)load(Number(b.dataset.level));};
+$('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)prepareRepair(Number(b.dataset.level));};
 $('help').onclick=()=>$('helpDialog').showModal();document.querySelector('.close').onclick=()=>$('helpDialog').close();document.querySelector('.close-help').onclick=()=>$('helpDialog').close();
 $('boltBalance').onclick=showShop;
 $('closeShop').onclick=()=>$('shopDialog').close();
@@ -69,8 +91,14 @@ $('cancelAd').onclick=()=>$('adDialog').close();
 $('completeAd').onclick=()=>{bolts=rewardBolt(bolts);persist();if(failed)load(level);else render();$('adDialog').close();$('shopDialog').close();say('Demo reward: 1 bolt added. No real ad was shown; no revenue was earned.');};
 $('retry').onclick=()=>{$('failDialog').close();load(level);};
 $('failShop').onclick=()=>{$('failDialog').close();showShop();};
-$('closeFail').onclick=()=>$('failDialog').close();
+$('closeFail').onclick=()=>{$('failDialog').close();showScreen('collection');};
 $('cancelReset').onclick=()=>$('resetDialog').close();
 $('confirmReset').onclick=()=>{$('resetDialog').close();if(resetsUsed.has(level))return;if(bolts===0){showShop();return;}resetsUsed.add(level);bolts=spendAttempt(bolts);delete attempts[level];persist();load(level);if(bolts===0)showShop();};
-$('next').onclick=next;$('replay').onclick=()=>$('winDialog').close();
+$('next').onclick=next;$('replay').onclick=()=>{$('winDialog').close();showScreen('play');};
+$('chooseLevels').onclick=()=>showScreen('collection');
+$('continueGame').onclick=()=>prepareRepair(level);
+$('beginRepair').onclick=()=>{showScreen('play');render();};
+$('transitionLevels').onclick=()=>showScreen('collection');
+document.querySelector('.brand').onclick=e=>{e.preventDefault();showScreen('collection');};
 load(level);
+showScreen('collection');

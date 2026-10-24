@@ -6,8 +6,8 @@ The Capacitor dependencies and a native store adapter are installed. This is not
 
 - Google draft prepared in Kev The Dev: Pocket Workshop, free game, package `com.kevthedev.pocketworkshop` checked available. Draft created with owner approval.
 - Apple draft created: Pocket Workshop: Cozy Puzzles, app ID 6826495134, bundle ID com.kevthedev.pocketworkshop. The plain name Pocket Workshop was unavailable. First consumable created: com.kevthedev.pocketworkshop.undo1, Apple purchase ID 6826495928.
-- Create consumable undo products using confirmed IDs: one undo at US $0.99 and three at US $1.99. Leave IDs blank in `billing-config.json` until the stores return them. Native UI must use localized prices returned by the store, not hardcoded USD prices.
-- Bolt packs confirmed: 5 at US $0.99, 12 at US $1.99, 35 at US $4.99. Google requires an APK with BILLING permission before one-time products can be added.
+- All five consumables now exist as drafts in both stores, with IDs recorded in `billing-config.json`. Native UI must use localized prices returned by the store, not hardcoded USD prices.
+- Bolt packs confirmed: 5 at US $0.99, 12 at US $1.99, 35 at US $4.99; undo packs: one at US $0.99 and three at US $1.99.
 
 ## Backend required before enabling purchases
 
@@ -30,3 +30,5 @@ Android release compilation verified with C:/Users/kwjiu/.jdks/jbr-21.0.11 and t
 Both app drafts exist. All five consumable IDs in billing-config.json have been created in both stores. Apple base prices are configured: undo1 and bolts5 $0.99, undo3 and bolts12 $1.99, bolts35 $4.99. Apple availability, localized display descriptions and review screenshots are still pending. Google purchase options are saved as drafts (standard, Buy) with USD base pricing and regional conversion, not activated. A signed Android version 1 (1.0), target API 36 bundle with BILLING permission is uploaded and saved in the closed Alpha draft; it has NOT been rolled out. iOS has not been compiled or uploaded. Receipt-validation endpoints, player authentication, authoritative wallet spending and native game shop wiring are NOT implemented. Purchases remain disabled.
 
 Private GitHub repository: https://github.com/kevojiujitsu/pocket-workshop (main). Do not commit signing keys, DPAPI password files or private store API credentials.
+
+Google Cloud project created with explicit owner approval: `pocket-workshop-512605` (project number `689405200219`), display name Pocket Workshop. The Billing page confirms no linked billing account. Google Play Android Developer API is enabled after explicit owner approval of its terms. No Google service account or service-account key has been created yet.

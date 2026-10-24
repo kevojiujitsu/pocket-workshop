@@ -19,6 +19,7 @@ assert.deepEqual(UNDO_PACKS.map(p=>[p.quantity,p.previewPrice]),[[1,'$0.99'],[3,
 assert.equal(STARTING_BOLTS,5);
 assert.equal(spendAttempt(1),0);assert.equal(spendAttempt(0),0);
 assert.equal(rewardBolt(0),1);assert.equal(rewardBolt(5),5);
+assert.equal(rewardBolt(35),35,'Reward cap must preserve purchased bolts');
 assert.equal(moveOutcome(9,1,10,true),'won','Win on final move must not cost a bolt');
 assert.equal(moveOutcome(9,1,10,false),'failed');
 assert.equal(moveOutcome(9,2,10,true),'failed','Over-budget win must fail');
