@@ -1,0 +1,51 @@
+{
+  "enabled": false,
+  "verificationOrigin": "",
+  "products": [
+    {
+      "key": "undo_1",
+      "kind": "undo",
+      "quantity": 1,
+      "appleId": "com.kevthedev.pocketworkshop.undo1",
+      "googleId": "",
+      "intendedUsdPrice": "0.99"
+    },
+    {
+      "key": "undo_3",
+      "kind": "undo",
+      "quantity": 3,
+      "appleId": "",
+      "googleId": "",
+      "intendedUsdPrice": "1.99"
+    },
+    {
+      "key": "bolts_5",
+      "kind": "bolt",
+      "quantity": 5,
+      "appleId": "",
+      "googleId": "",
+      "intendedUsdPrice": "0.99"
+    },
+    {
+      "key": "bolts_12",
+      "kind": "bolt",
+      "quantity": 12,
+      "appleId": "",
+      "googleId": "",
+      "intendedUsdPrice": "1.99"
+    },
+    {
+      "key": "bolts_35",
+      "kind": "bolt",
+      "quantity": 35,
+      "appleId": "",
+      "googleId": "",
+      "intendedUsdPrice": "4.99"
+    }
+  ],
+  "androidPackageName": "com.kevthedev.pocketworkshop",
+  "googlePlayDraftAppId": "4974089453769257218",
+  "appleBundleId": "com.kevthedev.pocketworkshop",
+  "appleAppId": "6826495134",
+  "appleDisplayName": "Pocket Workshop: Cozy Puzzles"
+}

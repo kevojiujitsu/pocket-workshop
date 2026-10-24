@@ -1,0 +1,26 @@
+# Mobile purchases — integration status
+
+The Capacitor dependencies and a native store adapter are installed. This is not a connected or released payment system. The browser shop cannot use Apple or Google native purchase APIs.
+
+## Pending account work
+
+- Google draft prepared in Kev The Dev: Pocket Workshop, free game, package `com.kevthedev.pocketworkshop` checked available. Draft created with owner approval.
+- Apple draft created: Pocket Workshop: Cozy Puzzles, app ID 6826495134, bundle ID com.kevthedev.pocketworkshop. The plain name Pocket Workshop was unavailable. First consumable created: com.kevthedev.pocketworkshop.undo1, Apple purchase ID 6826495928.
+- Create consumable undo products using confirmed IDs: one undo at US $0.99 and three at US $1.99. Leave IDs blank in `billing-config.json` until the stores return them. Native UI must use localized prices returned by the store, not hardcoded USD prices.
+- Bolt packs confirmed: 5 at US $0.99, 12 at US $1.99, 35 at US $4.99. Google requires an APK with BILLING permission before one-time products can be added.
+
+## Backend required before enabling purchases
+
+Implement authenticated player accounts and a durable wallet ledger. `POST /receipts/validate` must follow the purchase plugin validator response protocol, verify the package/bundle, product, quantity, purchased state and receipt with Apple/Google, reject refunded/invalid/sandbox receipts in production, bind purchases to the player, and atomically grant once per store transaction or purchase token. Derive rewards from the server catalog, never client quantities. Handle duplicate deliveries, pending payments and refunds. Do not acknowledge/finish until verified credits are durably committed. Process signed store refund notifications. Do not persist raw credentials in source or browser storage.
+
+`GET /wallet` returns verified integer `bolts` and `undos` for the authenticated player. Add authoritative idempotent debit endpoints for spending both currencies; browser localStorage is not the paid wallet. Wire native game actions to the server wallet and recover pending transactions after restart. `billing.js` provides store verification hooks; these server endpoints and game-wallet wiring are NOT implemented yet.
+
+Only then set the HTTPS `verificationOrigin`, registered product IDs and `enabled:true`; provide a short-lived authenticated session to the adapter. The adapter is deliberately not started automatically by `entry.js` while prerequisites are missing. Developer signing credentials remain outside the app.
+
+## Build
+
+From this directory run `npm ci` and `npm run build`. Set `POCKET_APP_ID` to the registered application ID before `npx cap add android` or `npx cap add ios`, then `npx cap sync`. If the two platforms use different IDs, configure each native project separately before signing. iOS needs macOS/Xcode. Android needs JDK and the Android SDK. Use store sandbox/license testers before production; test canceled, pending, duplicate, refunded and interrupted purchases as well as localized prices. Do not test with real charges.
+
+Do not enable browser preview purchases or deploy merchant secrets to the private Site.
+
+Android release compilation verified with C:/Users/kwjiu/.jdks/jbr-21.0.11 and the installed Android SDK. The default Android Studio JBR is Java 25 and is incompatible with this Gradle version. iOS project generated, but not compiled on Windows. Upload signing materials are outside the Git checkout in the task work/pocket-signing directory; passwords are protected with Windows DPAPI and not in source.

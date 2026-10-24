@@ -1,5 +1,5 @@
 import {isUnlocked,unlockedThrough} from './progression.js';
-import {STARTING_BOLTS,STARTING_UNDOS,UNDO_PACKS,spendUndo,spendAttempt,rewardBolt,moveOutcome} from './economy.js';
+import {STARTING_BOLTS,STARTING_UNDOS,BOLT_PACKS,UNDO_PACKS,spendUndo,spendAttempt,rewardBolt,moveOutcome} from './economy.js';
 import {levels,initial,moves,apply,solve,won} from './engine.js';
 const $=id=>document.getElementById(id);
 const art={
@@ -19,18 +19,19 @@ let completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.is
 let level=Number.isInteger(saved.level)&&saved.level>=0&&saved.level<levels.length?saved.level:0,state,history=[],selected=null,hinted=null,drag=null;
 let bolts=Number.isInteger(saved.bolts)?Math.max(0,saved.bolts):STARTING_BOLTS,used=0,attempts=saved.attempts||{},failed=false;
 let navPage=0;
+const resetsUsed=new Set(Array.isArray(saved.resetsUsed)?saved.resetsUsed:[]);
 let undoBalance=Number.isInteger(saved.undoBalance)?Math.max(0,saved.undoBalance):STARTING_UNDOS;
 const budget=i=>levels[i].moveLimit??levels[i].par*4+6;
 function rememberAttempt(){attempts[level]={state,used,history};persist();}
-function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each failed repair costs 1 bolt. You have ${undoBalance} undos.`;$('demoAd').disabled=bolts>=STARTING_BOLTS;$('undoPacks').innerHTML=UNDO_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} undo${p.quantity===1?'':'s'} · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('shopDialog').showModal();}
+function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each failed repair costs 1 bolt. You have ${undoBalance} undos.`;$('demoAd').disabled=bolts>=STARTING_BOLTS;$('boltPacks').innerHTML=BOLT_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} bolts · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('undoPacks').innerHTML=UNDO_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} undo${p.quantity===1?'':'s'} · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('shopDialog').showModal();}
 function fail(){if(failed)return;failed=true;bolts=spendAttempt(bolts);delete attempts[level];persist();render();$('failText').textContent=bolts?`You used all your moves. One bolt lost; ${bolts} remaining. Try a different approach.`:'You used your last bolt. Earn another through the rewarded-ad demo, or view the shop preview.';$('retry').disabled=bolts===0;$('failDialog').showModal();}
-function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level,bolts,attempts,undoBalance}));}catch{}}
+function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level,bolts,attempts,undoBalance,resetsUsed:[...resetsUsed]}));}catch{}}
 function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=Array.isArray(attempts[i]?.history)?attempts[i].history:[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
 function say(t){$('message').textContent=t;}
 function render(){
  $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
  $('difficulty').textContent=`${(level<20?['Beginner','Apprentice','Craftsperson','Master'][Math.floor(level/5)]:['Expert','Specialist','Virtuoso','Grandmaster'][Math.floor((level-20)/20)])} · ${levels[level].par} minimum slides`;
- $('moveCount').textContent=`${used} / ${budget(level)}`;$('undo').disabled=!history.length||failed; $('undoLabel').textContent=`Undo · ${undoBalance}`; $('undoStatus').textContent=`${undoBalance} undos remaining · shared across all levels`;  $('boltBalance').textContent=`⬢ ${bolts} bolts`; $('movesLeft').textContent=`${Math.max(0,budget(level)-used)} moves left`; 
+ $('moveCount').textContent=`${used} / ${budget(level)}`;$('undo').disabled=!history.length||failed; $('reset').disabled=resetsUsed.has(level)||failed||used===0;$('resetLabel').textContent=resetsUsed.has(level)?'Reset · 0':'Reset · 1'; $('undoLabel').textContent=`Undo · ${undoBalance}`; $('undoStatus').textContent=`${undoBalance} undos remaining · shared across all levels`;  $('boltBalance').textContent=`⬢ ${bolts} bolts`; $('movesLeft').textContent=`${Math.max(0,budget(level)-used)} moves left`; 
  const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
  $('collected').textContent=`${completed.length} / ${levels.length} restored`;
  $('board').innerHTML=state.map(([x,y,n,d],i)=>`<button class="piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}" data-i="${i}" aria-label="${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}" aria-pressed="${selected===i}" style="left:calc(${x*100/6}% + 4px);top:calc(${y*100/6}% + 4px);width:calc(${(d==='h'?n:1)*100/6}% - 8px);height:calc(${(d==='v'?n:1)*100/6}% - 8px);background:${colors[i%colors.length]}">${i===0?kit:part}</button>`).join('');
@@ -54,7 +55,7 @@ board.addEventListener('pointercancel',()=>{drag=null;});
 board.addEventListener('click',e=>{const piece=e.target.closest('[data-i]');if(piece&&e.detail===0)select(Number(piece.dataset.i));});
 document.addEventListener('keydown',e=>{if(document.querySelector('dialog[open]')||selected===null)return;const d=state[selected][3],sign=(d==='h'?{ArrowLeft:-1,ArrowRight:1}:{ArrowUp:-1,ArrowDown:1})[e.key];if(sign){e.preventDefault();step(sign);board.querySelector(`[data-i="${selected}"]`)?.focus();}});
 function undo(){if(!history.length||failed)return;const balance=spendUndo(undoBalance);if(balance===null){showShop();return;}const previous=history.pop();state=previous.state;used=previous.used;undoBalance=balance;hinted=null;rememberAttempt();render();say(`Last move undone and moves restored. ${undoBalance} undo${undoBalance===1?'':'s'} remaining.`);}
-function reset(){if(failed){if(bolts)load(level);else showShop();return;}if(!used){load(level);return;} $('resetDialog').showModal();}
+function reset(){if(resetsUsed.has(level)||failed||used===0)return;$('resetDialog').showModal();}
 function hint(){const path=solve(state);if(!path?.length){say(won(state)?'Repair complete! Choose another puzzle below.':'Try resetting this repair for a fresh start.');return;}const m=path[0];selected=m.i;hinted=m.i;render();const dir=state[m.i][3]==='h'?(m.delta>0?'right':'left'):(m.delta>0?'down':'up');say(`Slide ${m.i===0?'the brass kit':'highlighted part '+m.i} ${dir} ${Math.abs(m.delta)} space${Math.abs(m.delta)===1?'':'s'}.`);}
 function next(){ $('winDialog').close();load(level+1<levels.length?level+1:0);}
 $('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;$('back').onclick=()=>step(-1);$('forward').onclick=()=>step(1);
@@ -70,6 +71,6 @@ $('retry').onclick=()=>{$('failDialog').close();load(level);};
 $('failShop').onclick=()=>{$('failDialog').close();showShop();};
 $('closeFail').onclick=()=>$('failDialog').close();
 $('cancelReset').onclick=()=>$('resetDialog').close();
-$('confirmReset').onclick=()=>{$('resetDialog').close();if(bolts===0){showShop();return;}bolts=spendAttempt(bolts);delete attempts[level];persist();load(level);if(bolts===0)showShop();};
+$('confirmReset').onclick=()=>{$('resetDialog').close();if(resetsUsed.has(level))return;if(bolts===0){showShop();return;}resetsUsed.add(level);bolts=spendAttempt(bolts);delete attempts[level];persist();load(level);if(bolts===0)showShop();};
 $('next').onclick=next;$('replay').onclick=()=>$('winDialog').close();
 load(level);
