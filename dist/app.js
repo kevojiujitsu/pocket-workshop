@@ -10,17 +10,20 @@ const svg=(type)=>`<svg viewBox="0 0 90 80" aria-hidden="true">${art[type]}</svg
 const kit='<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="7" y="13" width="26" height="20" rx="4" stroke="currentColor" stroke-width="2.3"/><path d="M15 13V9h10v4M7 21h26m-15-3h4v6h-4z" stroke="currentColor" stroke-width="2"/></svg>';
 const part='<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M25 5a11 11 0 00-12 14L4 28a5 5 0 007 7l9-9A11 11 0 0034 14l-8 5-6-6z" fill="currentColor"/></svg>';
 const colors=['#c59b50','#799581','#aa7764','#6c8792','#9a9c70','#b38d68','#728b7a','#9c8294'];
-let saved={};try{saved=JSON.parse(localStorage.getItem('pocket-workshop-v1')||'{}')||{};}catch{}
-let completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<5):[];
-let level=Number.isInteger(saved.level)&&saved.level>=0&&saved.level<5?saved.level:0,state,history=[],selected=null,hinted=null,drag=null;
-function persist(){try{localStorage.setItem('pocket-workshop-v1',JSON.stringify({completed,level}));}catch{}}
+let saved={};try{saved=JSON.parse(localStorage.getItem('pocket-workshop-v2')||'{}')||{};}catch{}
+// Only the first puzzle is unchanged from the original five-level prototype.
+try{if(!localStorage.getItem('pocket-workshop-v2')){const old=JSON.parse(localStorage.getItem('pocket-workshop-v1')||'{}');if(old?.completed?.includes(0))saved={completed:[0],level:1};}}catch{}
+let completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<levels.length):[];
+let level=Number.isInteger(saved.level)&&saved.level>=0&&saved.level<levels.length?saved.level:0,state,history=[],selected=null,hinted=null,drag=null;
+function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level}));}catch{}}
 function load(i){level=i;state=initial(i);history=[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
 function say(t){$('message').textContent=t;}
 function render(){
- $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / 05`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
+ $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
+ $('difficulty').textContent=`${['Beginner','Apprentice','Craftsperson','Master'][Math.floor(level/5)]} · ${levels[level].par} minimum slides`;
  $('moveCount').textContent=String(history.length).padStart(2,'0');$('undo').disabled=!history.length;
- $('shelf').innerHTML=levels.map((l,i)=>`<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">0${i+1}</span></div>`).join('');
- $('collected').textContent=`${completed.length} / 5 restored`;
+ const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
+ $('collected').textContent=`${completed.length} / ${levels.length} restored`;
  $('board').innerHTML=state.map(([x,y,n,d],i)=>`<button class="piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}" data-i="${i}" aria-label="${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}" aria-pressed="${selected===i}" style="left:calc(${x*100/6}% + 4px);top:calc(${y*100/6}% + 4px);width:calc(${(d==='h'?n:1)*100/6}% - 8px);height:calc(${(d==='v'?n:1)*100/6}% - 8px);background:${colors[i%colors.length]}">${i===0?kit:part}</button>`).join('');
  $('levelNav').innerHTML=levels.map((l,i)=>`<button data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}>${completed.includes(i)?'✓':i+1}</button>`).join('');
  const vertical=selected!==null&&state[selected][3]==='v';$('back').textContent=vertical?'↑':'←';$('forward').textContent=vertical?'↓':'→';
@@ -28,7 +31,7 @@ function render(){
  $('back').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta<0);$('forward').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta>0);
 }
 function move(m){if(!moves(state).some(a=>a.i===m.i&&a.delta===m.delta))return false;history.push(state);state=apply(state,m);hinted=null;render();say('A little more room. Keep going.');if(won(state))finish();return true;}
-function finish(){if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===5?`All five treasures have a home. You completed this first collection in your own time. Replay any repair to try fewer moves.`:`${history.length} moves. One lovely thing brought back to life. Your workshop is looking a little brighter.`;$('next').textContent=completed.length===5?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
+function finish(){if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All 20 treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${history.length} moves. One lovely thing brought back to life. Your workshop is looking a little brighter.`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
 function step(sign){if(selected===null)return;move({i:selected,delta:sign});}
 function select(i){selected=i;hinted=null;render();}
 const board=$('board');
@@ -40,7 +43,7 @@ document.addEventListener('keydown',e=>{if($('helpDialog').open||$('winDialog').
 function undo(){if(history.length){state=history.pop();hinted=null;render();say('One move back. A fresh perspective.');}}
 function reset(){load(level);}
 function hint(){const path=solve(state);if(!path?.length){say(won(state)?'Repair complete! Choose another puzzle below.':'Try resetting this repair for a fresh start.');return;}const m=path[0];selected=m.i;hinted=m.i;render();const dir=state[m.i][3]==='h'?(m.delta>0?'right':'left'):(m.delta>0?'down':'up');say(`Slide ${m.i===0?'the brass kit':'highlighted part '+m.i} ${dir} ${Math.abs(m.delta)} space${Math.abs(m.delta)===1?'':'s'}.`);}
-function next(){ $('winDialog').close();load(completed.length===5?0:(()=>{for(let k=1;k<=5;k++){let i=(level+k)%5;if(!completed.includes(i))return i;}return 0;})());}
+function next(){ $('winDialog').close();load(completed.length===levels.length?0:(()=>{for(let k=1;k<=levels.length;k++){let i=(level+k)%levels.length;if(!completed.includes(i))return i;}return 0;})());}
 $('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;$('back').onclick=()=>step(-1);$('forward').onclick=()=>step(1);
 $('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)load(Number(b.dataset.level));};
 $('help').onclick=()=>$('helpDialog').showModal();document.querySelector('.close').onclick=()=>$('helpDialog').close();document.querySelector('.close-help').onclick=()=>$('helpDialog').close();

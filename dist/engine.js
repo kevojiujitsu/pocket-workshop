@@ -1,10 +1,5 @@
-export const levels = [
- {name:'A little light',reward:'Desk lamp',icon:'lamp',pieces:[[0,2,2,'h'],[2,1,2,'v'],[3,3,2,'h']]},
- {name:'Time to unwind',reward:'Mantel clock',icon:'clock',pieces:[[0,2,2,'h'],[2,1,3,'v'],[1,4,2,'h'],[4,0,3,'v']]},
- {name:'Find your frequency',reward:'Pocket radio',icon:'radio',pieces:[[0,2,2,'h'],[2,0,3,'v'],[3,1,2,'v'],[1,3,2,'h'],[4,3,2,'v'],[3,5,3,'h']]},
- {name:'A fresh start',reward:'Plant stand',icon:'plant',pieces:[[0,2,2,'h'],[2,1,3,'v'],[4,0,3,'v'],[1,4,2,'h'],[3,3,2,'h'],[5,3,3,'v'],[0,0,2,'h']]},
- {name:'Made with love',reward:'Toy robot',icon:'robot',pieces:[[0,2,2,'h'],[2,0,3,'v'],[3,1,2,'v'],[1,3,2,'h'],[4,2,3,'v'],[0,4,2,'v']]}
-];
+import {levels} from './levels.js';
+export {levels};
 export const initial = i => levels[i].pieces.map(p=>[...p]);
 export const won = s => s[0][0]===4;
 export function moves(s){
