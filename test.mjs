@@ -30,7 +30,7 @@ for(let i=0;i<levels.length;i++){
  const path=solve(s);assert(path?.length,'Level must be solvable');
  assert(path.reduce((total,m)=>total+Math.abs(m.delta),0)<=(levels[i].moveLimit??levels[i].par*4+6),'Move allowance must permit a legal solution with arrow controls');
  assert.equal(levels[i].moveLimit-levels[i].solutionSquares,levels[i].buffer);
- assert(levels[i].buffer>=1&&levels[i].buffer<=3,'Tight allowance must leave only 1–3 spare square moves');
+ assert(levels[i].buffer>=3&&levels[i].buffer<=5,'Tight allowance must leave only 3–5 spare square moves');
  assert.equal(path.length,levels[i].par,'Displayed minimum must match shortest solution');
  if(i)assert(levels[i].par>=levels[i-1].par,'Minimum solution length must never decrease');
  for(const m of path){assert(moves(s).some(a=>a.i===m.i&&a.delta===m.delta));const before=JSON.stringify(s);const t=apply(s,m);assert.equal(JSON.stringify(s),before,'Move must not mutate history');s=t;}

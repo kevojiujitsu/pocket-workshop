@@ -1,13 +1,13 @@
-// 200 unique solver-verified puzzles. Limits allow a verified solution plus 1–3 square moves.
+// 200 solver-verified puzzles; allowances include 3–5 spare square moves.
 export const levels = [
   {
     "name": "Small wonders 1",
     "reward": "Small wonders Lamp",
     "icon": "lamp",
     "par": 8,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 12,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -100,9 +100,9 @@ export const levels = [
     "reward": "Small wonders Clock",
     "icon": "clock",
     "par": 8,
-    "moveLimit": 16,
+    "moveLimit": 18,
     "solutionSquares": 13,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -183,9 +183,9 @@ export const levels = [
     "reward": "Small wonders Radio",
     "icon": "radio",
     "par": 8,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 10,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -278,9 +278,9 @@ export const levels = [
     "reward": "Small wonders Planter",
     "icon": "plant",
     "par": 8,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 12,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -379,9 +379,9 @@ export const levels = [
     "reward": "Small wonders Robot",
     "icon": "robot",
     "par": 8,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 12,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -474,9 +474,9 @@ export const levels = [
     "reward": "Small wonders Lamp",
     "icon": "lamp",
     "par": 8,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 14,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -569,9 +569,9 @@ export const levels = [
     "reward": "Small wonders Clock",
     "icon": "clock",
     "par": 8,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 10,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -664,9 +664,9 @@ export const levels = [
     "reward": "Small wonders Radio",
     "icon": "radio",
     "par": 8,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 10,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -747,9 +747,9 @@ export const levels = [
     "reward": "Small wonders Planter",
     "icon": "plant",
     "par": 8,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 12,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -836,9 +836,9 @@ export const levels = [
     "reward": "Small wonders Robot",
     "icon": "robot",
     "par": 8,
-    "moveLimit": 14,
+    "moveLimit": 16,
     "solutionSquares": 11,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -931,9 +931,9 @@ export const levels = [
     "reward": "Quiet craft Lamp",
     "icon": "lamp",
     "par": 8,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 10,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1020,9 +1020,9 @@ export const levels = [
     "reward": "Quiet craft Clock",
     "icon": "clock",
     "par": 8,
-    "moveLimit": 14,
+    "moveLimit": 16,
     "solutionSquares": 11,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1109,9 +1109,9 @@ export const levels = [
     "reward": "Quiet craft Radio",
     "icon": "radio",
     "par": 9,
-    "moveLimit": 14,
+    "moveLimit": 16,
     "solutionSquares": 11,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1204,9 +1204,9 @@ export const levels = [
     "reward": "Quiet craft Planter",
     "icon": "plant",
     "par": 9,
-    "moveLimit": 18,
+    "moveLimit": 20,
     "solutionSquares": 15,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1293,9 +1293,9 @@ export const levels = [
     "reward": "Quiet craft Robot",
     "icon": "robot",
     "par": 9,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 12,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1388,9 +1388,9 @@ export const levels = [
     "reward": "Quiet craft Lamp",
     "icon": "lamp",
     "par": 9,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 14,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1483,9 +1483,9 @@ export const levels = [
     "reward": "Quiet craft Clock",
     "icon": "clock",
     "par": 9,
-    "moveLimit": 16,
+    "moveLimit": 18,
     "solutionSquares": 13,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1578,9 +1578,9 @@ export const levels = [
     "reward": "Quiet craft Radio",
     "icon": "radio",
     "par": 9,
-    "moveLimit": 16,
+    "moveLimit": 18,
     "solutionSquares": 13,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1661,9 +1661,9 @@ export const levels = [
     "reward": "Quiet craft Planter",
     "icon": "plant",
     "par": 9,
-    "moveLimit": 16,
+    "moveLimit": 18,
     "solutionSquares": 13,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1750,9 +1750,9 @@ export const levels = [
     "reward": "Quiet craft Robot",
     "icon": "robot",
     "par": 9,
-    "moveLimit": 18,
+    "moveLimit": 20,
     "solutionSquares": 15,
-    "buffer": 3,
+    "buffer": 5,
     "pieces": [
       [
         0,
@@ -1851,9 +1851,9 @@ export const levels = [
     "reward": "Brass & timber Lamp",
     "icon": "lamp",
     "par": 9,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 11,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -1946,9 +1946,9 @@ export const levels = [
     "reward": "Brass & timber Clock",
     "icon": "clock",
     "par": 9,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2029,9 +2029,9 @@ export const levels = [
     "reward": "Brass & timber Radio",
     "icon": "radio",
     "par": 9,
-    "moveLimit": 13,
+    "moveLimit": 15,
     "solutionSquares": 11,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2124,9 +2124,9 @@ export const levels = [
     "reward": "Brass & timber Planter",
     "icon": "plant",
     "par": 10,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2225,9 +2225,9 @@ export const levels = [
     "reward": "Brass & timber Robot",
     "icon": "robot",
     "par": 10,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2320,9 +2320,9 @@ export const levels = [
     "reward": "Brass & timber Lamp",
     "icon": "lamp",
     "par": 10,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 13,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2409,9 +2409,9 @@ export const levels = [
     "reward": "Brass & timber Clock",
     "icon": "clock",
     "par": 10,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 15,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2504,9 +2504,9 @@ export const levels = [
     "reward": "Brass & timber Radio",
     "icon": "radio",
     "par": 10,
-    "moveLimit": 14,
+    "moveLimit": 16,
     "solutionSquares": 12,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2599,9 +2599,9 @@ export const levels = [
     "reward": "Brass & timber Planter",
     "icon": "plant",
     "par": 10,
-    "moveLimit": 16,
+    "moveLimit": 18,
     "solutionSquares": 14,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2694,9 +2694,9 @@ export const levels = [
     "reward": "Brass & timber Robot",
     "icon": "robot",
     "par": 10,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 15,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2789,9 +2789,9 @@ export const levels = [
     "reward": "Careful hands Lamp",
     "icon": "lamp",
     "par": 10,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 15,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2872,9 +2872,9 @@ export const levels = [
     "reward": "Careful hands Clock",
     "icon": "clock",
     "par": 10,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 13,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -2967,9 +2967,9 @@ export const levels = [
     "reward": "Careful hands Radio",
     "icon": "radio",
     "par": 10,
-    "moveLimit": 18,
+    "moveLimit": 20,
     "solutionSquares": 16,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3068,9 +3068,9 @@ export const levels = [
     "reward": "Careful hands Planter",
     "icon": "plant",
     "par": 10,
-    "moveLimit": 18,
+    "moveLimit": 20,
     "solutionSquares": 16,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3163,9 +3163,9 @@ export const levels = [
     "reward": "Careful hands Robot",
     "icon": "robot",
     "par": 11,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 20,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3258,9 +3258,9 @@ export const levels = [
     "reward": "Careful hands Lamp",
     "icon": "lamp",
     "par": 11,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3353,9 +3353,9 @@ export const levels = [
     "reward": "Careful hands Clock",
     "icon": "clock",
     "par": 11,
-    "moveLimit": 19,
+    "moveLimit": 21,
     "solutionSquares": 17,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3442,9 +3442,9 @@ export const levels = [
     "reward": "Careful hands Radio",
     "icon": "radio",
     "par": 11,
-    "moveLimit": 18,
+    "moveLimit": 20,
     "solutionSquares": 16,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3531,9 +3531,9 @@ export const levels = [
     "reward": "Careful hands Planter",
     "icon": "plant",
     "par": 11,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3626,9 +3626,9 @@ export const levels = [
     "reward": "Careful hands Robot",
     "icon": "robot",
     "par": 11,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3721,9 +3721,9 @@ export const levels = [
     "reward": "Hidden paths Lamp",
     "icon": "lamp",
     "par": 11,
-    "moveLimit": 17,
+    "moveLimit": 19,
     "solutionSquares": 15,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3804,9 +3804,9 @@ export const levels = [
     "reward": "Hidden paths Clock",
     "icon": "clock",
     "par": 11,
-    "moveLimit": 19,
+    "moveLimit": 21,
     "solutionSquares": 17,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3899,9 +3899,9 @@ export const levels = [
     "reward": "Hidden paths Radio",
     "icon": "radio",
     "par": 11,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 22,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -3982,9 +3982,9 @@ export const levels = [
     "reward": "Hidden paths Planter",
     "icon": "plant",
     "par": 11,
-    "moveLimit": 15,
+    "moveLimit": 17,
     "solutionSquares": 13,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4077,9 +4077,9 @@ export const levels = [
     "reward": "Hidden paths Robot",
     "icon": "robot",
     "par": 11,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4178,9 +4178,9 @@ export const levels = [
     "reward": "Hidden paths Lamp",
     "icon": "lamp",
     "par": 12,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 24,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4273,9 +4273,9 @@ export const levels = [
     "reward": "Hidden paths Clock",
     "icon": "clock",
     "par": 12,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4362,9 +4362,9 @@ export const levels = [
     "reward": "Hidden paths Radio",
     "icon": "radio",
     "par": 12,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4457,9 +4457,9 @@ export const levels = [
     "reward": "Hidden paths Planter",
     "icon": "plant",
     "par": 12,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4540,9 +4540,9 @@ export const levels = [
     "reward": "Hidden paths Robot",
     "icon": "robot",
     "par": 12,
-    "moveLimit": 19,
+    "moveLimit": 21,
     "solutionSquares": 17,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4635,9 +4635,9 @@ export const levels = [
     "reward": "Fine balance Lamp",
     "icon": "lamp",
     "par": 12,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4736,9 +4736,9 @@ export const levels = [
     "reward": "Fine balance Clock",
     "icon": "clock",
     "par": 12,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 21,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4831,9 +4831,9 @@ export const levels = [
     "reward": "Fine balance Radio",
     "icon": "radio",
     "par": 12,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 23,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -4926,9 +4926,9 @@ export const levels = [
     "reward": "Fine balance Planter",
     "icon": "plant",
     "par": 12,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 20,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5021,9 +5021,9 @@ export const levels = [
     "reward": "Fine balance Robot",
     "icon": "robot",
     "par": 12,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5110,9 +5110,9 @@ export const levels = [
     "reward": "Fine balance Lamp",
     "icon": "lamp",
     "par": 12,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 20,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5205,9 +5205,9 @@ export const levels = [
     "reward": "Fine balance Clock",
     "icon": "clock",
     "par": 13,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5288,9 +5288,9 @@ export const levels = [
     "reward": "Fine balance Radio",
     "icon": "radio",
     "par": 13,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 21,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5371,9 +5371,9 @@ export const levels = [
     "reward": "Fine balance Planter",
     "icon": "plant",
     "par": 13,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 20,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5466,9 +5466,9 @@ export const levels = [
     "reward": "Fine balance Robot",
     "icon": "robot",
     "par": 13,
-    "moveLimit": 27,
+    "moveLimit": 29,
     "solutionSquares": 25,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5561,9 +5561,9 @@ export const levels = [
     "reward": "Patient work Lamp",
     "icon": "lamp",
     "par": 13,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5650,9 +5650,9 @@ export const levels = [
     "reward": "Patient work Clock",
     "icon": "clock",
     "par": 13,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 21,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5745,9 +5745,9 @@ export const levels = [
     "reward": "Patient work Radio",
     "icon": "radio",
     "par": 13,
-    "moveLimit": 20,
+    "moveLimit": 22,
     "solutionSquares": 18,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5828,9 +5828,9 @@ export const levels = [
     "reward": "Patient work Planter",
     "icon": "plant",
     "par": 13,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -5923,9 +5923,9 @@ export const levels = [
     "reward": "Patient work Robot",
     "icon": "robot",
     "par": 13,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 22,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6024,9 +6024,9 @@ export const levels = [
     "reward": "Patient work Lamp",
     "icon": "lamp",
     "par": 13,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 24,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6119,9 +6119,9 @@ export const levels = [
     "reward": "Patient work Clock",
     "icon": "clock",
     "par": 13,
-    "moveLimit": 27,
+    "moveLimit": 29,
     "solutionSquares": 25,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6214,9 +6214,9 @@ export const levels = [
     "reward": "Patient work Radio",
     "icon": "radio",
     "par": 14,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 23,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6309,9 +6309,9 @@ export const levels = [
     "reward": "Patient work Planter",
     "icon": "plant",
     "par": 14,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 24,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6398,9 +6398,9 @@ export const levels = [
     "reward": "Patient work Robot",
     "icon": "robot",
     "par": 14,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6481,9 +6481,9 @@ export const levels = [
     "reward": "Second life Lamp",
     "icon": "lamp",
     "par": 14,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 24,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6564,9 +6564,9 @@ export const levels = [
     "reward": "Second life Clock",
     "icon": "clock",
     "par": 14,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 22,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6659,9 +6659,9 @@ export const levels = [
     "reward": "Second life Radio",
     "icon": "radio",
     "par": 14,
-    "moveLimit": 28,
+    "moveLimit": 30,
     "solutionSquares": 26,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6754,9 +6754,9 @@ export const levels = [
     "reward": "Second life Planter",
     "icon": "plant",
     "par": 14,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 21,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6843,9 +6843,9 @@ export const levels = [
     "reward": "Second life Robot",
     "icon": "robot",
     "par": 14,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 24,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -6938,9 +6938,9 @@ export const levels = [
     "reward": "Second life Lamp",
     "icon": "lamp",
     "par": 14,
-    "moveLimit": 21,
+    "moveLimit": 23,
     "solutionSquares": 19,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -7021,9 +7021,9 @@ export const levels = [
     "reward": "Second life Clock",
     "icon": "clock",
     "par": 14,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 20,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -7116,9 +7116,9 @@ export const levels = [
     "reward": "Second life Radio",
     "icon": "radio",
     "par": 14,
-    "moveLimit": 27,
+    "moveLimit": 29,
     "solutionSquares": 25,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -7217,9 +7217,9 @@ export const levels = [
     "reward": "Second life Planter",
     "icon": "plant",
     "par": 15,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 27,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -7312,9 +7312,9 @@ export const levels = [
     "reward": "Second life Robot",
     "icon": "robot",
     "par": 15,
-    "moveLimit": 27,
+    "moveLimit": 29,
     "solutionSquares": 25,
-    "buffer": 2,
+    "buffer": 4,
     "pieces": [
       [
         0,
@@ -7401,9 +7401,9 @@ export const levels = [
     "reward": "Clever corners Lamp",
     "icon": "lamp",
     "par": 15,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 21,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7484,9 +7484,9 @@ export const levels = [
     "reward": "Clever corners Clock",
     "icon": "clock",
     "par": 15,
-    "moveLimit": 28,
+    "moveLimit": 30,
     "solutionSquares": 27,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7567,9 +7567,9 @@ export const levels = [
     "reward": "Clever corners Radio",
     "icon": "radio",
     "par": 15,
-    "moveLimit": 30,
+    "moveLimit": 32,
     "solutionSquares": 29,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7662,9 +7662,9 @@ export const levels = [
     "reward": "Clever corners Planter",
     "icon": "plant",
     "par": 15,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 23,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7757,9 +7757,9 @@ export const levels = [
     "reward": "Clever corners Robot",
     "icon": "robot",
     "par": 15,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 24,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7840,9 +7840,9 @@ export const levels = [
     "reward": "Clever corners Lamp",
     "icon": "lamp",
     "par": 15,
-    "moveLimit": 22,
+    "moveLimit": 24,
     "solutionSquares": 21,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -7935,9 +7935,9 @@ export const levels = [
     "reward": "Clever corners Clock",
     "icon": "clock",
     "par": 15,
-    "moveLimit": 28,
+    "moveLimit": 30,
     "solutionSquares": 27,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8036,9 +8036,9 @@ export const levels = [
     "reward": "Clever corners Radio",
     "icon": "radio",
     "par": 15,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 23,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8125,9 +8125,9 @@ export const levels = [
     "reward": "Clever corners Planter",
     "icon": "plant",
     "par": 15,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 22,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8208,9 +8208,9 @@ export const levels = [
     "reward": "Clever corners Robot",
     "icon": "robot",
     "par": 16,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 28,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8303,9 +8303,9 @@ export const levels = [
     "reward": "Golden touch Lamp",
     "icon": "lamp",
     "par": 16,
-    "moveLimit": 31,
+    "moveLimit": 33,
     "solutionSquares": 30,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8386,9 +8386,9 @@ export const levels = [
     "reward": "Golden touch Clock",
     "icon": "clock",
     "par": 16,
-    "moveLimit": 31,
+    "moveLimit": 33,
     "solutionSquares": 30,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8481,9 +8481,9 @@ export const levels = [
     "reward": "Golden touch Radio",
     "icon": "radio",
     "par": 16,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 24,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8576,9 +8576,9 @@ export const levels = [
     "reward": "Golden touch Planter",
     "icon": "plant",
     "par": 16,
-    "moveLimit": 23,
+    "moveLimit": 25,
     "solutionSquares": 22,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8671,9 +8671,9 @@ export const levels = [
     "reward": "Golden touch Robot",
     "icon": "robot",
     "par": 16,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 28,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8772,9 +8772,9 @@ export const levels = [
     "reward": "Golden touch Lamp",
     "icon": "lamp",
     "par": 16,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 24,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8861,9 +8861,9 @@ export const levels = [
     "reward": "Golden touch Clock",
     "icon": "clock",
     "par": 16,
-    "moveLimit": 25,
+    "moveLimit": 27,
     "solutionSquares": 24,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -8944,9 +8944,9 @@ export const levels = [
     "reward": "Golden touch Radio",
     "icon": "radio",
     "par": 16,
-    "moveLimit": 31,
+    "moveLimit": 33,
     "solutionSquares": 30,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9027,9 +9027,9 @@ export const levels = [
     "reward": "Golden touch Planter",
     "icon": "plant",
     "par": 16,
-    "moveLimit": 33,
+    "moveLimit": 35,
     "solutionSquares": 32,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9122,9 +9122,9 @@ export const levels = [
     "reward": "Golden touch Robot",
     "icon": "robot",
     "par": 16,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9217,9 +9217,9 @@ export const levels = [
     "reward": "Deep focus Lamp",
     "icon": "lamp",
     "par": 17,
-    "moveLimit": 30,
+    "moveLimit": 32,
     "solutionSquares": 29,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9312,9 +9312,9 @@ export const levels = [
     "reward": "Deep focus Clock",
     "icon": "clock",
     "par": 17,
-    "moveLimit": 32,
+    "moveLimit": 34,
     "solutionSquares": 31,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9407,9 +9407,9 @@ export const levels = [
     "reward": "Deep focus Radio",
     "icon": "radio",
     "par": 17,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 23,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9502,9 +9502,9 @@ export const levels = [
     "reward": "Deep focus Planter",
     "icon": "plant",
     "par": 17,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9585,9 +9585,9 @@ export const levels = [
     "reward": "Deep focus Robot",
     "icon": "robot",
     "par": 17,
-    "moveLimit": 33,
+    "moveLimit": 35,
     "solutionSquares": 32,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9668,9 +9668,9 @@ export const levels = [
     "reward": "Deep focus Lamp",
     "icon": "lamp",
     "par": 17,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9763,9 +9763,9 @@ export const levels = [
     "reward": "Deep focus Clock",
     "icon": "clock",
     "par": 17,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9858,9 +9858,9 @@ export const levels = [
     "reward": "Deep focus Radio",
     "icon": "radio",
     "par": 17,
-    "moveLimit": 24,
+    "moveLimit": 26,
     "solutionSquares": 23,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -9953,9 +9953,9 @@ export const levels = [
     "reward": "Deep focus Planter",
     "icon": "plant",
     "par": 17,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10036,9 +10036,9 @@ export const levels = [
     "reward": "Deep focus Robot",
     "icon": "robot",
     "par": 17,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10119,9 +10119,9 @@ export const levels = [
     "reward": "Artisan hours Lamp",
     "icon": "lamp",
     "par": 17,
-    "moveLimit": 35,
+    "moveLimit": 37,
     "solutionSquares": 34,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10214,9 +10214,9 @@ export const levels = [
     "reward": "Artisan hours Clock",
     "icon": "clock",
     "par": 18,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10309,9 +10309,9 @@ export const levels = [
     "reward": "Artisan hours Radio",
     "icon": "radio",
     "par": 18,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10404,9 +10404,9 @@ export const levels = [
     "reward": "Artisan hours Planter",
     "icon": "plant",
     "par": 18,
-    "moveLimit": 33,
+    "moveLimit": 35,
     "solutionSquares": 32,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10499,9 +10499,9 @@ export const levels = [
     "reward": "Artisan hours Robot",
     "icon": "robot",
     "par": 18,
-    "moveLimit": 33,
+    "moveLimit": 35,
     "solutionSquares": 32,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10594,9 +10594,9 @@ export const levels = [
     "reward": "Artisan hours Lamp",
     "icon": "lamp",
     "par": 18,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 28,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10689,9 +10689,9 @@ export const levels = [
     "reward": "Artisan hours Clock",
     "icon": "clock",
     "par": 18,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10784,9 +10784,9 @@ export const levels = [
     "reward": "Artisan hours Radio",
     "icon": "radio",
     "par": 18,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 28,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10867,9 +10867,9 @@ export const levels = [
     "reward": "Artisan hours Planter",
     "icon": "plant",
     "par": 18,
-    "moveLimit": 35,
+    "moveLimit": 37,
     "solutionSquares": 34,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -10950,9 +10950,9 @@ export const levels = [
     "reward": "Artisan hours Robot",
     "icon": "robot",
     "par": 18,
-    "moveLimit": 30,
+    "moveLimit": 32,
     "solutionSquares": 29,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11045,9 +11045,9 @@ export const levels = [
     "reward": "Intricate things Lamp",
     "icon": "lamp",
     "par": 18,
-    "moveLimit": 26,
+    "moveLimit": 28,
     "solutionSquares": 25,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11140,9 +11140,9 @@ export const levels = [
     "reward": "Intricate things Clock",
     "icon": "clock",
     "par": 18,
-    "moveLimit": 30,
+    "moveLimit": 32,
     "solutionSquares": 29,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11223,9 +11223,9 @@ export const levels = [
     "reward": "Intricate things Radio",
     "icon": "radio",
     "par": 19,
-    "moveLimit": 35,
+    "moveLimit": 37,
     "solutionSquares": 34,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11324,9 +11324,9 @@ export const levels = [
     "reward": "Intricate things Planter",
     "icon": "plant",
     "par": 19,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11425,9 +11425,9 @@ export const levels = [
     "reward": "Intricate things Robot",
     "icon": "robot",
     "par": 19,
-    "moveLimit": 35,
+    "moveLimit": 37,
     "solutionSquares": 34,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11520,9 +11520,9 @@ export const levels = [
     "reward": "Intricate things Lamp",
     "icon": "lamp",
     "par": 19,
-    "moveLimit": 35,
+    "moveLimit": 37,
     "solutionSquares": 34,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11615,9 +11615,9 @@ export const levels = [
     "reward": "Intricate things Clock",
     "icon": "clock",
     "par": 19,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11698,9 +11698,9 @@ export const levels = [
     "reward": "Intricate things Radio",
     "icon": "radio",
     "par": 19,
-    "moveLimit": 31,
+    "moveLimit": 33,
     "solutionSquares": 30,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11793,9 +11793,9 @@ export const levels = [
     "reward": "Intricate things Planter",
     "icon": "plant",
     "par": 19,
-    "moveLimit": 28,
+    "moveLimit": 30,
     "solutionSquares": 27,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11888,9 +11888,9 @@ export const levels = [
     "reward": "Intricate things Robot",
     "icon": "robot",
     "par": 19,
-    "moveLimit": 30,
+    "moveLimit": 32,
     "solutionSquares": 29,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -11971,9 +11971,9 @@ export const levels = [
     "reward": "Master craft Lamp",
     "icon": "lamp",
     "par": 19,
-    "moveLimit": 36,
+    "moveLimit": 38,
     "solutionSquares": 35,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12054,9 +12054,9 @@ export const levels = [
     "reward": "Master craft Clock",
     "icon": "clock",
     "par": 19,
-    "moveLimit": 33,
+    "moveLimit": 35,
     "solutionSquares": 32,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12149,9 +12149,9 @@ export const levels = [
     "reward": "Master craft Radio",
     "icon": "radio",
     "par": 19,
-    "moveLimit": 29,
+    "moveLimit": 31,
     "solutionSquares": 28,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12244,9 +12244,9 @@ export const levels = [
     "reward": "Master craft Planter",
     "icon": "plant",
     "par": 20,
-    "moveLimit": 36,
+    "moveLimit": 38,
     "solutionSquares": 35,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12345,9 +12345,9 @@ export const levels = [
     "reward": "Master craft Robot",
     "icon": "robot",
     "par": 20,
-    "moveLimit": 36,
+    "moveLimit": 38,
     "solutionSquares": 35,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12440,9 +12440,9 @@ export const levels = [
     "reward": "Master craft Lamp",
     "icon": "lamp",
     "par": 20,
-    "moveLimit": 36,
+    "moveLimit": 38,
     "solutionSquares": 35,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12535,9 +12535,9 @@ export const levels = [
     "reward": "Master craft Clock",
     "icon": "clock",
     "par": 20,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12630,9 +12630,9 @@ export const levels = [
     "reward": "Master craft Radio",
     "icon": "radio",
     "par": 20,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12725,9 +12725,9 @@ export const levels = [
     "reward": "Master craft Planter",
     "icon": "plant",
     "par": 20,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12820,9 +12820,9 @@ export const levels = [
     "reward": "Master craft Robot",
     "icon": "robot",
     "par": 20,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12915,9 +12915,9 @@ export const levels = [
     "reward": "Lasting beauty Lamp",
     "icon": "lamp",
     "par": 20,
-    "moveLimit": 31,
+    "moveLimit": 33,
     "solutionSquares": 30,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -12998,9 +12998,9 @@ export const levels = [
     "reward": "Lasting beauty Clock",
     "icon": "clock",
     "par": 20,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13081,9 +13081,9 @@ export const levels = [
     "reward": "Lasting beauty Radio",
     "icon": "radio",
     "par": 20,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13176,9 +13176,9 @@ export const levels = [
     "reward": "Lasting beauty Planter",
     "icon": "plant",
     "par": 20,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13259,9 +13259,9 @@ export const levels = [
     "reward": "Lasting beauty Robot",
     "icon": "robot",
     "par": 21,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13360,9 +13360,9 @@ export const levels = [
     "reward": "Lasting beauty Lamp",
     "icon": "lamp",
     "par": 21,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13461,9 +13461,9 @@ export const levels = [
     "reward": "Lasting beauty Clock",
     "icon": "clock",
     "par": 21,
-    "moveLimit": 37,
+    "moveLimit": 39,
     "solutionSquares": 36,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13556,9 +13556,9 @@ export const levels = [
     "reward": "Lasting beauty Radio",
     "icon": "radio",
     "par": 21,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13651,9 +13651,9 @@ export const levels = [
     "reward": "Lasting beauty Planter",
     "icon": "plant",
     "par": 21,
-    "moveLimit": 34,
+    "moveLimit": 36,
     "solutionSquares": 33,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13746,9 +13746,9 @@ export const levels = [
     "reward": "Lasting beauty Robot",
     "icon": "robot",
     "par": 21,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13841,9 +13841,9 @@ export const levels = [
     "reward": "Grand designs Lamp",
     "icon": "lamp",
     "par": 21,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -13936,9 +13936,9 @@ export const levels = [
     "reward": "Grand designs Clock",
     "icon": "clock",
     "par": 21,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14031,9 +14031,9 @@ export const levels = [
     "reward": "Grand designs Radio",
     "icon": "radio",
     "par": 21,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14114,9 +14114,9 @@ export const levels = [
     "reward": "Grand designs Planter",
     "icon": "plant",
     "par": 21,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14209,9 +14209,9 @@ export const levels = [
     "reward": "Grand designs Robot",
     "icon": "robot",
     "par": 21,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14304,9 +14304,9 @@ export const levels = [
     "reward": "Grand designs Lamp",
     "icon": "lamp",
     "par": 22,
-    "moveLimit": 38,
+    "moveLimit": 40,
     "solutionSquares": 37,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14405,9 +14405,9 @@ export const levels = [
     "reward": "Grand designs Clock",
     "icon": "clock",
     "par": 22,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14506,9 +14506,9 @@ export const levels = [
     "reward": "Grand designs Radio",
     "icon": "radio",
     "par": 22,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14607,9 +14607,9 @@ export const levels = [
     "reward": "Grand designs Planter",
     "icon": "plant",
     "par": 22,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14708,9 +14708,9 @@ export const levels = [
     "reward": "Grand designs Robot",
     "icon": "robot",
     "par": 22,
-    "moveLimit": 46,
+    "moveLimit": 48,
     "solutionSquares": 45,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14791,9 +14791,9 @@ export const levels = [
     "reward": "Rare treasures Lamp",
     "icon": "lamp",
     "par": 22,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14892,9 +14892,9 @@ export const levels = [
     "reward": "Rare treasures Clock",
     "icon": "clock",
     "par": 22,
-    "moveLimit": 39,
+    "moveLimit": 41,
     "solutionSquares": 38,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -14987,9 +14987,9 @@ export const levels = [
     "reward": "Rare treasures Radio",
     "icon": "radio",
     "par": 22,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15082,9 +15082,9 @@ export const levels = [
     "reward": "Rare treasures Planter",
     "icon": "plant",
     "par": 22,
-    "moveLimit": 46,
+    "moveLimit": 48,
     "solutionSquares": 45,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15165,9 +15165,9 @@ export const levels = [
     "reward": "Rare treasures Robot",
     "icon": "robot",
     "par": 22,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15260,9 +15260,9 @@ export const levels = [
     "reward": "Rare treasures Lamp",
     "icon": "lamp",
     "par": 22,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15355,9 +15355,9 @@ export const levels = [
     "reward": "Rare treasures Clock",
     "icon": "clock",
     "par": 23,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15456,9 +15456,9 @@ export const levels = [
     "reward": "Rare treasures Radio",
     "icon": "radio",
     "par": 23,
-    "moveLimit": 48,
+    "moveLimit": 50,
     "solutionSquares": 47,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15539,9 +15539,9 @@ export const levels = [
     "reward": "Rare treasures Planter",
     "icon": "plant",
     "par": 23,
-    "moveLimit": 41,
+    "moveLimit": 43,
     "solutionSquares": 40,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15640,9 +15640,9 @@ export const levels = [
     "reward": "Rare treasures Robot",
     "icon": "robot",
     "par": 23,
-    "moveLimit": 41,
+    "moveLimit": 43,
     "solutionSquares": 40,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15735,9 +15735,9 @@ export const levels = [
     "reward": "Expert hands Lamp",
     "icon": "lamp",
     "par": 23,
-    "moveLimit": 40,
+    "moveLimit": 42,
     "solutionSquares": 39,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15830,9 +15830,9 @@ export const levels = [
     "reward": "Expert hands Clock",
     "icon": "clock",
     "par": 23,
-    "moveLimit": 47,
+    "moveLimit": 49,
     "solutionSquares": 46,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -15913,9 +15913,9 @@ export const levels = [
     "reward": "Expert hands Radio",
     "icon": "radio",
     "par": 23,
-    "moveLimit": 41,
+    "moveLimit": 43,
     "solutionSquares": 40,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16014,9 +16014,9 @@ export const levels = [
     "reward": "Expert hands Planter",
     "icon": "plant",
     "par": 23,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16109,9 +16109,9 @@ export const levels = [
     "reward": "Expert hands Robot",
     "icon": "robot",
     "par": 23,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16204,9 +16204,9 @@ export const levels = [
     "reward": "Expert hands Lamp",
     "icon": "lamp",
     "par": 23,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16305,9 +16305,9 @@ export const levels = [
     "reward": "Expert hands Clock",
     "icon": "clock",
     "par": 23,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16400,9 +16400,9 @@ export const levels = [
     "reward": "Expert hands Radio",
     "icon": "radio",
     "par": 23,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16495,9 +16495,9 @@ export const levels = [
     "reward": "Expert hands Planter",
     "icon": "plant",
     "par": 23,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16590,9 +16590,9 @@ export const levels = [
     "reward": "Expert hands Robot",
     "icon": "robot",
     "par": 24,
-    "moveLimit": 47,
+    "moveLimit": 49,
     "solutionSquares": 46,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16673,9 +16673,9 @@ export const levels = [
     "reward": "Perfect fit Lamp",
     "icon": "lamp",
     "par": 24,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16768,9 +16768,9 @@ export const levels = [
     "reward": "Perfect fit Clock",
     "icon": "clock",
     "par": 24,
-    "moveLimit": 51,
+    "moveLimit": 53,
     "solutionSquares": 50,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16851,9 +16851,9 @@ export const levels = [
     "reward": "Perfect fit Radio",
     "icon": "radio",
     "par": 24,
-    "moveLimit": 41,
+    "moveLimit": 43,
     "solutionSquares": 40,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -16952,9 +16952,9 @@ export const levels = [
     "reward": "Perfect fit Planter",
     "icon": "plant",
     "par": 24,
-    "moveLimit": 45,
+    "moveLimit": 47,
     "solutionSquares": 44,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17047,9 +17047,9 @@ export const levels = [
     "reward": "Perfect fit Robot",
     "icon": "robot",
     "par": 24,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17148,9 +17148,9 @@ export const levels = [
     "reward": "Perfect fit Lamp",
     "icon": "lamp",
     "par": 24,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17249,9 +17249,9 @@ export const levels = [
     "reward": "Perfect fit Clock",
     "icon": "clock",
     "par": 24,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17350,9 +17350,9 @@ export const levels = [
     "reward": "Perfect fit Radio",
     "icon": "radio",
     "par": 24,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17451,9 +17451,9 @@ export const levels = [
     "reward": "Perfect fit Planter",
     "icon": "plant",
     "par": 24,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17552,9 +17552,9 @@ export const levels = [
     "reward": "Perfect fit Robot",
     "icon": "robot",
     "par": 24,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17653,9 +17653,9 @@ export const levels = [
     "reward": "Workshop legacy Lamp",
     "icon": "lamp",
     "par": 24,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17754,9 +17754,9 @@ export const levels = [
     "reward": "Workshop legacy Clock",
     "icon": "clock",
     "par": 24,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17855,9 +17855,9 @@ export const levels = [
     "reward": "Workshop legacy Radio",
     "icon": "radio",
     "par": 24,
-    "moveLimit": 44,
+    "moveLimit": 46,
     "solutionSquares": 43,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -17956,9 +17956,9 @@ export const levels = [
     "reward": "Workshop legacy Planter",
     "icon": "plant",
     "par": 24,
-    "moveLimit": 42,
+    "moveLimit": 44,
     "solutionSquares": 41,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18057,9 +18057,9 @@ export const levels = [
     "reward": "Workshop legacy Robot",
     "icon": "robot",
     "par": 25,
-    "moveLimit": 43,
+    "moveLimit": 45,
     "solutionSquares": 42,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18158,9 +18158,9 @@ export const levels = [
     "reward": "Workshop legacy Lamp",
     "icon": "lamp",
     "par": 25,
-    "moveLimit": 44,
+    "moveLimit": 46,
     "solutionSquares": 43,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18259,9 +18259,9 @@ export const levels = [
     "reward": "Workshop legacy Clock",
     "icon": "clock",
     "par": 25,
-    "moveLimit": 44,
+    "moveLimit": 46,
     "solutionSquares": 43,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18360,9 +18360,9 @@ export const levels = [
     "reward": "Workshop legacy Radio",
     "icon": "radio",
     "par": 25,
-    "moveLimit": 45,
+    "moveLimit": 47,
     "solutionSquares": 44,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18461,9 +18461,9 @@ export const levels = [
     "reward": "Workshop legacy Planter",
     "icon": "plant",
     "par": 25,
-    "moveLimit": 46,
+    "moveLimit": 48,
     "solutionSquares": 45,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
@@ -18562,9 +18562,9 @@ export const levels = [
     "reward": "Workshop legacy Robot",
     "icon": "robot",
     "par": 26,
-    "moveLimit": 55,
+    "moveLimit": 57,
     "solutionSquares": 54,
-    "buffer": 1,
+    "buffer": 3,
     "pieces": [
       [
         0,
