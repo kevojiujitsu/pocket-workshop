@@ -72,7 +72,8 @@ body[data-screen="play"] footer{max-width:500px;margin:auto}
 body{background-color:var(--workshop-page);background-image:radial-gradient(#203e3812 .7px,transparent .7px),linear-gradient(120deg,#ffffff12,transparent 65%);background-size:7px 7px,100% 100%;transition:background-color .5s ease}
 .game,.collection-map,dialog{background-color:var(--workshop-surface);border-color:var(--workshop-edge);box-shadow:0 16px 40px #203e3815}
 .shelf-card{background:#ffffff15;border-color:#203e3830}.exit{background:var(--workshop-surface)}
-#board{background-color:var(--workshop-board);border-color:var(--workshop-edge)}
+#board{background-color:var(--workshop-board);border:3px solid #999b8a;box-shadow:inset 0 1px 5px #4b493b16;border-radius:8px}
+.exit{top:calc(33.333% + 3px);height:calc(16.666% - 2px);color:#9c9274}
 .reward-icon,.transition-art{background-color:var(--workshop-board)}
 .transition-art{border-color:var(--workshop-edge);background-image:radial-gradient(circle,#ffffff30 0 45%,#ffffff10 46% 70%,transparent 71%)}
 .collection-map .level-nav button{background:var(--card-color);border-color:var(--card-edge)}
