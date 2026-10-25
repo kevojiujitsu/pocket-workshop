@@ -1,4 +1,11 @@
 import assert from 'node:assert/strict';
+import {levelTheme} from './dist/themes.js';
+assert.equal(new Set(Array.from({length:200},(_,i)=>JSON.stringify(levelTheme(i)))).size,200,'Each repair has a distinct coordinated theme');
+import {readAudioSettings} from './dist/audio.js';
+assert.deepEqual(readAudioSettings({getItem:()=>null}),{music:true,sounds:true});
+assert.deepEqual(readAudioSettings({getItem:()=>'{"music":false,"sounds":true}'}),{music:false,sounds:true},'Music can stay muted independently of block sounds');
+assert.deepEqual(readAudioSettings({getItem:()=>'{"music":true,"sounds":false}'}),{music:true,sounds:false});
+assert.deepEqual(readAudioSettings({getItem:()=>'{broken'}),{music:true,sounds:true},'Invalid preferences must not break the game');
 import {isUnlocked,unlockedThrough} from './dist/progression.js';
 assert(isUnlocked(0,[],100));assert(!isUnlocked(1,[],100));
 assert(isUnlocked(1,[0],100));assert(!isUnlocked(2,[0],100));

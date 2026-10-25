@@ -31,3 +31,6 @@ The 200-level picker uses ten pages of 20 repairs. Original 20-level progress is
 Level 1 starts unlocked. Finish every preceding repair to unlock the next one. Completed repairs can be replayed. Level pages can be browsed, but locked repairs are disabled and guarded by the load function, including when restoring a saved level. Existing completions are retained; gaps must be finished before later levels become playable.
 
 Each level permits one reset in total, including across retries/reloads. It costs one bolt and does not replenish undos. Confirmed bolt packs: 5 for $0.99, 12 for $1.99, 35 for $4.99 USD. Native purchases are being prepared in mobile/; they are not live.
+
+## Music and visual themes
+Original synthesized workshop music, wooden slide effects, and completion chimes use Web Audio. Music and effects have independent saved switches in Audio settings; audio begins after a gesture and pauses in the background. No third-party music files or tracking are used. Each of 200 repairs has a distinct coordinated palette and one of five workbench textures. Tool buttons and typography share the workshop visual style.

@@ -1,7 +1,10 @@
+import {createWorkshopAudio} from './audio.js';
+import {applyLevelTheme,levelTheme} from './themes.js';
 import {isUnlocked,unlockedThrough} from './progression.js';
 import {STARTING_BOLTS,STARTING_UNDOS,BOLT_PACKS,UNDO_PACKS,spendUndo,spendAttempt,rewardBolt,moveOutcome} from './economy.js';
 import {levels,initial,moves,apply,solve,won} from './engine.js';
 const $=id=>document.getElementById(id);
+const audio=createWorkshopAudio();
 const art={
 lamp:'<path d="M29 25L39 8h12l10 17z" fill="#d8aa54"/><path d="M45 25v37m-16 0h32" stroke="#46685a" stroke-width="5" stroke-linecap="round"/><path d="M32 65h26" stroke="#b88b4d" stroke-width="6"/>',
 clock:'<path d="M23 62V30a22 22 0 0144 0v32z" fill="#ad7852"/><circle cx="45" cy="32" r="17" fill="#f5ecd5"/><path d="M45 20v13l9 5" fill="none" stroke="#35564a" stroke-width="3" stroke-linecap="round"/><path d="M19 64h52" stroke="#35564a" stroke-width="6"/>',
@@ -50,6 +53,7 @@ function prepareRepair(i){
 }
 function say(t){$('message').textContent=t;}
 function render(){
+ const theme=applyLevelTheme(level);
  $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
  $('difficulty').textContent=`${['Apprentice','Craftsperson','Artisan','Specialist','Expert','Virtuoso','Master','Grandmaster','Inventor','Workshop legend'][Math.min(9,Math.floor(level/20))]} · ${levels[level].par} minimum slides`;
  $('moveCount').textContent=`${used} / ${budget(level)}`;$('undo').disabled=!history.length||failed; $('reset').disabled=resetsUsed.has(level)||failed||used===0;$('resetLabel').textContent=resetsUsed.has(level)?'Reset · 0':'Reset · 1'; $('undoLabel').textContent=`Undo · ${undoBalance}`; $('undoStatus').textContent=`${undoBalance} undos remaining · shared across all levels`;  $('boltBalance').textContent=`⬢ ${bolts} bolts`; $('movesLeft').textContent=`${Math.max(0,budget(level)-used)} moves left`; 
@@ -66,10 +70,10 @@ function render(){
   piece.className=`piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}`;
   piece.setAttribute('aria-label',`${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}`);
   piece.setAttribute('aria-pressed',selected===i);
-  Object.assign(piece.style,{left:`calc(${x*100/6}% + 4px)`,top:`calc(${y*100/6}% + 4px)`,width:`calc(${(d==='h'?n:1)*100/6}% - 8px)`,height:`calc(${(d==='v'?n:1)*100/6}% - 8px)`,background:colors[i%colors.length]});
+  Object.assign(piece.style,{left:`calc(${x*100/6}% + 4px)`,top:`calc(${y*100/6}% + 4px)`,width:`calc(${(d==='h'?n:1)*100/6}% - 8px)`,height:`calc(${(d==='v'?n:1)*100/6}% - 8px)`,background:theme.pieces[i%theme.pieces.length]});
  });
  const pageStart=navPage*20; $('chapterNav').innerHTML=Array.from({length:Math.ceil(levels.length/20)},(_,j)=>`<button data-chapter="${j}" class="${j===navPage?'active':''}" aria-label="Levels ${j*20+1} to ${Math.min(levels.length,j*20+20)}">${j*20+1}–${Math.min(levels.length,j*20+20)}</button>`).join('');
- $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}><span class="level-number">${locked?'🔒 ':completed.includes(i)?'✓ ':''}${String(i+1).padStart(2,'0')}</span><span class="level-card-name">${l.name}</span><span class="level-card-status">${locked?'Locked':completed.includes(i)?'Restored':'Ready to repair'}</span></button>`}).join('');
+ $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" style="--card-color:${levelTheme(i).surface};--card-edge:${levelTheme(i).accent}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}><span class="level-number">${locked?'🔒 ':completed.includes(i)?'✓ ':''}${String(i+1).padStart(2,'0')}</span><span class="level-card-name">${l.name}</span><span class="level-card-status">${locked?'Locked':completed.includes(i)?'Restored':'Ready to repair'}</span></button>`}).join('');
  const vertical=selected!==null&&state[selected][3]==='v';
  $('selectedLabel').textContent=selected===null?'Drag a part with your finger or stylus':selected===0?'Brass kit · slide to the exit':`Part ${selected} · ${vertical?'up or down':'left or right'}`;
 
@@ -77,8 +81,9 @@ function render(){
 function move(m){if(failed)return false;if(bolts===0){showShop();return false;}if(!moves(state).some(a=>a.i===m.i&&a.delta===m.delta))return false;
  const cost=Math.abs(m.delta),nextState=apply(state,m),outcome=moveOutcome(used,cost,budget(level),won(nextState));
  if(used+cost<=budget(level)){history.push({state,used});state=nextState;}used=Math.min(budget(level),used+cost);hinted=null;rememberAttempt();render();
+ if(state===nextState)audio.slide(cost);
  if(outcome==='won')finish();else if(outcome==='failed')fail();else say('A little more room. Keep going.');return true;}
-function finish(){delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All ${levels.length} treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life.${level+1<levels.length?' Repair '+(level+2)+' is now unlocked.':''}`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
+function finish(){audio.celebrate();delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All ${levels.length} treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life.${level+1<levels.length?' Repair '+(level+2)+' is now unlocked.':''}`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
 function step(sign){if(selected===null)return;move({i:selected,delta:sign});}
 function select(i){selected=i;hinted=null;render();}
 const board=$('board');
@@ -122,6 +127,15 @@ $('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;
 $('chapterNav').onclick=e=>{const b=e.target.closest('[data-chapter]');if(b){navPage=Number(b.dataset.chapter);render();}};
 $('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)prepareRepair(Number(b.dataset.level));};
 $('help').onclick=()=>$('helpDialog').showModal();document.querySelector('.close').onclick=()=>$('helpDialog').close();document.querySelector('.close-help').onclick=()=>$('helpDialog').close();
+function syncAudioControls(){
+ $('musicToggle').checked=audio.settings.music;$('soundsToggle').checked=audio.settings.sounds;
+ $('audioSettings').textContent=audio.settings.music||audio.settings.sounds?'♫ Audio':'♫ Muted';
+}
+$('audioSettings').onclick=()=>{syncAudioControls();$('audioDialog').showModal();};
+$('closeAudio').onclick=()=>$('audioDialog').close();
+$('musicToggle').onchange=e=>{audio.set('music',e.target.checked);syncAudioControls();};
+$('soundsToggle').onchange=e=>{audio.set('sounds',e.target.checked);syncAudioControls();};
+syncAudioControls();
 $('boltBalance').onclick=showShop;
 $('closeShop').onclick=()=>$('shopDialog').close();
 $('demoAd').onclick=()=>{$('adDialog').showModal();};
