@@ -26,7 +26,7 @@ function rememberAttempt(){attempts[level]={state,used,history};persist();}
 function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each failed repair costs 1 bolt. You have ${undoBalance} undos.`;$('demoAd').disabled=bolts>=STARTING_BOLTS;$('boltPacks').innerHTML=BOLT_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} bolts · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('undoPacks').innerHTML=UNDO_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} undo${p.quantity===1?'':'s'} · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('shopDialog').showModal();}
 function fail(){if(failed)return;failed=true;bolts=spendAttempt(bolts);delete attempts[level];persist();render();$('failText').textContent=bolts?`You used all your moves. One bolt lost; ${bolts} remaining. Try a different approach.`:'You used your last bolt. Earn another through the rewarded-ad demo, or view the shop preview.';$('retry').disabled=bolts===0;$('failDialog').showModal();}
 function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({puzzleRevision:3,completed,level,bolts,attempts,undoBalance,resetsUsed:[...resetsUsed]}));}catch{}}
-function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=Array.isArray(attempts[i]?.history)?attempts[i].history:[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
+function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=Array.isArray(attempts[i]?.history)?attempts[i].history:[];selected=null;hinted=null;persist();render();say('Drag a part along its track with your finger or stylus.');}
 let activeScreen='collection';
 function showScreen(name){
  activeScreen=name;
@@ -56,12 +56,23 @@ function render(){
  const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
  $('continueGame').textContent=`Continue repair ${level+1} →`;
  $('collected').textContent=`${completed.length} / ${levels.length} restored`;
- $('board').innerHTML=state.map(([x,y,n,d],i)=>`<button class="piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}" data-i="${i}" aria-label="${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}" aria-pressed="${selected===i}" style="left:calc(${x*100/6}% + 4px);top:calc(${y*100/6}% + 4px);width:calc(${(d==='h'?n:1)*100/6}% - 8px);height:calc(${(d==='v'?n:1)*100/6}% - 8px);background:${colors[i%colors.length]}">${i===0?kit:part}</button>`).join('');
+ const signature=JSON.stringify([level,state.map(p=>[p[2],p[3]])]);
+ if($('board').dataset.signature!==signature){
+  $('board').innerHTML=state.map((p,i)=>`<button data-i="${i}">${i===0?kit:part}</button>`).join('');
+  $('board').dataset.signature=signature;
+ }
+ state.forEach(([x,y,n,d],i)=>{
+  const piece=$('board').children[i];
+  piece.className=`piece ${d} ${i===0?'target':''} ${selected===i?'selected':''} ${hinted===i?'hinted':''}`;
+  piece.setAttribute('aria-label',`${i===0?'Brass repair kit':'Part '+i}, ${d==='h'?'horizontal':'vertical'}, column ${x+1}, row ${y+1}`);
+  piece.setAttribute('aria-pressed',selected===i);
+  Object.assign(piece.style,{left:`calc(${x*100/6}% + 4px)`,top:`calc(${y*100/6}% + 4px)`,width:`calc(${(d==='h'?n:1)*100/6}% - 8px)`,height:`calc(${(d==='v'?n:1)*100/6}% - 8px)`,background:colors[i%colors.length]});
+ });
  const pageStart=navPage*20; $('chapterNav').innerHTML=Array.from({length:Math.ceil(levels.length/20)},(_,j)=>`<button data-chapter="${j}" class="${j===navPage?'active':''}" aria-label="Levels ${j*20+1} to ${Math.min(levels.length,j*20+20)}">${j*20+1}–${Math.min(levels.length,j*20+20)}</button>`).join('');
  $('levelNav').innerHTML=levels.slice(pageStart,pageStart+20).map((l,j)=>{const i=pageStart+j,locked=!isUnlocked(i,completed,levels.length);return `<button ${locked?'disabled':''} title="${locked?'Complete repair '+i+' to unlock':'Play repair '+(i+1)}" data-level="${i}" class="${i===level?'active':''} ${completed.includes(i)?'done':''}" aria-label="Repair ${i+1}: ${l.name}${locked?', locked — complete repair '+i+' first':completed.includes(i)?', completed':''}" ${i===level?'aria-current="step"':''}><span class="level-number">${locked?'🔒 ':completed.includes(i)?'✓ ':''}${String(i+1).padStart(2,'0')}</span><span class="level-card-name">${l.name}</span><span class="level-card-status">${locked?'Locked':completed.includes(i)?'Restored':'Ready to repair'}</span></button>`}).join('');
- const vertical=selected!==null&&state[selected][3]==='v';$('back').textContent=vertical?'↑':'←';$('forward').textContent=vertical?'↓':'→';
- $('selectedLabel').textContent=selected===null?'Select a part to move':selected===0?'Brass kit · slide to the exit':`Part ${selected} · ${vertical?'up or down':'left or right'}`;
- $('back').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta<0);$('forward').disabled=selected===null||!moves(state).some(m=>m.i===selected&&m.delta>0);
+ const vertical=selected!==null&&state[selected][3]==='v';
+ $('selectedLabel').textContent=selected===null?'Drag a part with your finger or stylus':selected===0?'Brass kit · slide to the exit':`Part ${selected} · ${vertical?'up or down':'left or right'}`;
+
 }
 function move(m){if(failed)return false;if(bolts===0){showShop();return false;}if(!moves(state).some(a=>a.i===m.i&&a.delta===m.delta))return false;
  const cost=Math.abs(m.delta),nextState=apply(state,m),outcome=moveOutcome(used,cost,budget(level),won(nextState));
@@ -71,16 +82,43 @@ function finish(){delete attempts[level];if(!completed.includes(level))completed
 function step(sign){if(selected===null)return;move({i:selected,delta:sign});}
 function select(i){selected=i;hinted=null;render();}
 const board=$('board');
-board.addEventListener('pointerdown',e=>{const piece=e.target.closest('[data-i]');if(!piece)return;const i=Number(piece.dataset.i);drag={i,x:e.clientX,y:e.clientY};selected=i;board.setPointerCapture(e.pointerId);render();e.preventDefault();});
-board.addEventListener('pointerup',e=>{if(!drag)return;const {i,x,y}=drag;drag=null;const d=state[i][3],distance=d==='h'?e.clientX-x:e.clientY-y,cell=board.clientWidth/6;let delta=Math.round(distance/cell);if(delta){const legal=moves(state).filter(m=>m.i===i&&Math.sign(m.delta)===Math.sign(delta));const max=Math.max(0,...legal.map(m=>Math.abs(m.delta)));delta=Math.sign(delta)*Math.min(Math.abs(delta),max);if(delta)move({i,delta});else say('That path is blocked. Move another part first.');}else render();});
-board.addEventListener('pointercancel',()=>{drag=null;});
+board.addEventListener('pointerdown',e=>{
+ const piece=e.target.closest('[data-i]');
+ if(!piece||drag||failed||activeScreen!=='play'||!e.isPrimary||(e.pointerType==='mouse'&&e.button!==0))return;
+ if(!bolts){showShop();return;}
+ const i=Number(piece.dataset.i),legal=moves(state).filter(m=>m.i===i).map(m=>m.delta);
+ selected=i;hinted=null;render();
+ drag={i,pointerId:e.pointerId,x:e.clientX,y:e.clientY,cell:board.clientWidth/6,min:Math.min(0,...legal),max:Math.max(0,...legal),offset:0};
+ piece.classList.add('dragging');board.setPointerCapture(e.pointerId);e.preventDefault();
+});
+board.addEventListener('pointermove',e=>{
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const [x,y,,d]=state[drag.i],distance=d==='h'?e.clientX-drag.x:e.clientY-drag.y;
+ drag.offset=Math.max(drag.min*drag.cell,Math.min(drag.max*drag.cell,distance));
+ board.children[drag.i].style[d==='h'?'left':'top']=`calc(${(d==='h'?x:y)*100/6}% + ${4+drag.offset}px)`;
+ e.preventDefault();
+});
+function endDrag(e,cancelled=false){
+ if(!drag||e.pointerId!==drag.pointerId)return;
+ const {i,pointerId,cell,min,max}=drag,[x,y,,d]=state[i];
+ const distance=d==='h'?e.clientX-drag.x:e.clientY-drag.y;
+ const offset=cancelled?drag.offset:Math.max(min*cell,Math.min(max*cell,distance));
+ const piece=board.children[i];piece.style[d==='h'?'left':'top']=`calc(${(d==='h'?x:y)*100/6}% + ${4+offset}px)`;
+ void piece.offsetWidth;piece.classList.remove('dragging');drag=null;
+ if(board.hasPointerCapture(pointerId))board.releasePointerCapture(pointerId);
+ const delta=cancelled?0:Math.max(min,Math.min(max,Math.round(offset/cell)));
+ if(delta)move({i,delta});else render();
+}
+board.addEventListener('pointerup',e=>endDrag(e));
+board.addEventListener('pointercancel',e=>endDrag(e,true));
+board.addEventListener('lostpointercapture',e=>{if(drag?.pointerId===e.pointerId)endDrag(e,true);});
 board.addEventListener('click',e=>{const piece=e.target.closest('[data-i]');if(piece&&e.detail===0)select(Number(piece.dataset.i));});
 document.addEventListener('keydown',e=>{if(activeScreen!=='play'||document.querySelector('dialog[open]')||selected===null)return;const d=state[selected][3],sign=(d==='h'?{ArrowLeft:-1,ArrowRight:1}:{ArrowUp:-1,ArrowDown:1})[e.key];if(sign){e.preventDefault();step(sign);board.querySelector(`[data-i="${selected}"]`)?.focus();}});
 function undo(){if(!history.length||failed)return;const balance=spendUndo(undoBalance);if(balance===null){showShop();return;}const previous=history.pop();state=previous.state;used=previous.used;undoBalance=balance;hinted=null;rememberAttempt();render();say(`Last move undone and moves restored. ${undoBalance} undo${undoBalance===1?'':'s'} remaining.`);}
 function reset(){if(resetsUsed.has(level)||failed||used===0)return;$('resetDialog').showModal();}
 function hint(){const path=solve(state);if(!path?.length){say(won(state)?'Repair complete! Choose another puzzle below.':'Try resetting this repair for a fresh start.');return;}const m=path[0];selected=m.i;hinted=m.i;render();const dir=state[m.i][3]==='h'?(m.delta>0?'right':'left'):(m.delta>0?'down':'up');say(`Slide ${m.i===0?'the brass kit':'highlighted part '+m.i} ${dir} ${Math.abs(m.delta)} space${Math.abs(m.delta)===1?'':'s'}.`);}
 function next(){ $('winDialog').close();prepareRepair(level+1<levels.length?level+1:0);}
-$('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;$('back').onclick=()=>step(-1);$('forward').onclick=()=>step(1);
+$('undo').onclick=undo;$('reset').onclick=reset;$('hint').onclick=hint;
 $('chapterNav').onclick=e=>{const b=e.target.closest('[data-chapter]');if(b){navPage=Number(b.dataset.chapter);render();}};
 $('levelNav').onclick=e=>{const b=e.target.closest('[data-level]');if(b)prepareRepair(Number(b.dataset.level));};
 $('help').onclick=()=>$('helpDialog').showModal();document.querySelector('.close').onclick=()=>$('helpDialog').close();document.querySelector('.close-help').onclick=()=>$('helpDialog').close();

@@ -6,7 +6,7 @@ A touch-friendly browser prototype for the future iOS and Android game. Real ads
 
 Open the published private Site, or serve `dist` with a static HTTP server. Example: `python -m http.server 8080 --directory dist`, then visit http://localhost:8080 on this computer.
 
-Drag a part along its track, or select it and use the arrow controls. Move the brass kit to the right edge to restore an object. Includes 200 repairs, undo, reset, unlimited hints, and device-local collection progress. The current puzzle restarts when the page reloads. Progress does not sync between devices. External Google Fonts are optional; system fonts work offline.
+Drag a part along its track with a finger, stylus, or mouse. Blocks follow the pointer and settle into legal grid spaces on release. On-screen movement arrows are removed; keyboard arrow controls remain accessible after selecting a part with Enter. Move the brass kit to the right edge to restore an object. Includes 200 repairs, undo, reset, unlimited hints, and device-local collection progress. The current puzzle restarts when the page reloads. Progress does not sync between devices. External Google Fonts are optional; system fonts work offline.
 
 ## Verify
 
