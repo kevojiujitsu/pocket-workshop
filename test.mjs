@@ -29,12 +29,18 @@ for(let i=0;i<levels.length;i++){
  for(const [x,y,n,d] of s)for(let k=0;k<n;k++){const xx=x+(d==='h'?k:0),yy=y+(d==='v'?k:0),key=`${xx},${yy}`;assert(xx>=0&&xx<6&&yy>=0&&yy<6);assert(!cells.has(key),'Overlapping pieces');cells.add(key);}
  const path=solve(s);assert(path?.length,'Level must be solvable');
  assert(path.reduce((total,m)=>total+Math.abs(m.delta),0)<=(levels[i].moveLimit??levels[i].par*4+6),'Move allowance must permit a legal solution with arrow controls');
+ assert.equal(levels[i].moveLimit-levels[i].solutionSquares,levels[i].buffer);
+ assert(levels[i].buffer>=1&&levels[i].buffer<=3,'Tight allowance must leave only 1–3 spare square moves');
  assert.equal(path.length,levels[i].par,'Displayed minimum must match shortest solution');
  if(i)assert(levels[i].par>=levels[i-1].par,'Minimum solution length must never decrease');
  for(const m of path){assert(moves(s).some(a=>a.i===m.i&&a.delta===m.delta));const before=JSON.stringify(s);const t=apply(s,m);assert.equal(JSON.stringify(s),before,'Move must not mutate history');s=t;}
  assert(won(s));console.log(`Repair ${i+1}: solvable in ${path.length} moves`);
 }
 
-assert.equal(levels.length,100);
+assert.equal(levels.length,200);
 const fingerprints=levels.map(l=>JSON.stringify([l.pieces[0],...l.pieces.slice(1).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)))]));
-assert.equal(new Set(fingerprints).size,100,'All 100 layouts must be distinct');
+assert.equal(new Set(fingerprints).size,200,'All 200 layouts must be distinct');
+
+assert(levels[0].par>=8,'Opening puzzles must require planning');
+assert(isUnlocked(199,Array.from({length:199},(_,i)=>i),200));
+assert(!isUnlocked(199,Array.from({length:198},(_,i)=>i),200));

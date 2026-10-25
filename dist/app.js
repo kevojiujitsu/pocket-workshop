@@ -17,7 +17,7 @@ let saved={};try{saved=JSON.parse(localStorage.getItem('pocket-workshop-v2')||'{
 try{if(!localStorage.getItem('pocket-workshop-v2')){const old=JSON.parse(localStorage.getItem('pocket-workshop-v1')||'{}');if(old?.completed?.includes(0))saved={completed:[0],level:1};}}catch{}
 let completed=Array.isArray(saved.completed)?saved.completed.filter(n=>Number.isInteger(n)&&n>=0&&n<levels.length):[];
 let level=Number.isInteger(saved.level)&&saved.level>=0&&saved.level<levels.length?saved.level:0,state,history=[],selected=null,hinted=null,drag=null;
-let bolts=Number.isInteger(saved.bolts)?Math.max(0,saved.bolts):STARTING_BOLTS,used=0,attempts=saved.attempts||{},failed=false;
+let bolts=Number.isInteger(saved.bolts)?Math.max(0,saved.bolts):STARTING_BOLTS,used=0,attempts=saved.puzzleRevision===3?(saved.attempts||{}):{},failed=false;
 let navPage=0;
 const resetsUsed=new Set(Array.isArray(saved.resetsUsed)?saved.resetsUsed:[]);
 let undoBalance=Number.isInteger(saved.undoBalance)?Math.max(0,saved.undoBalance):STARTING_UNDOS;
@@ -25,7 +25,7 @@ const budget=i=>levels[i].moveLimit??levels[i].par*4+6;
 function rememberAttempt(){attempts[level]={state,used,history};persist();}
 function showShop(){ $('shopBalance').textContent=`You have ${bolts} bolts. Each failed repair costs 1 bolt. You have ${undoBalance} undos.`;$('demoAd').disabled=bolts>=STARTING_BOLTS;$('boltPacks').innerHTML=BOLT_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} bolts · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('undoPacks').innerHTML=UNDO_PACKS.map(p=>`<div class="bolt-pack"><strong>${p.quantity} undo${p.quantity===1?'':'s'} · ${p.previewPrice} USD</strong><button disabled>Purchases available after mobile billing is connected</button></div>`).join('');$('shopDialog').showModal();}
 function fail(){if(failed)return;failed=true;bolts=spendAttempt(bolts);delete attempts[level];persist();render();$('failText').textContent=bolts?`You used all your moves. One bolt lost; ${bolts} remaining. Try a different approach.`:'You used your last bolt. Earn another through the rewarded-ad demo, or view the shop preview.';$('retry').disabled=bolts===0;$('failDialog').showModal();}
-function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({completed,level,bolts,attempts,undoBalance,resetsUsed:[...resetsUsed]}));}catch{}}
+function persist(){try{localStorage.setItem('pocket-workshop-v2',JSON.stringify({puzzleRevision:3,completed,level,bolts,attempts,undoBalance,resetsUsed:[...resetsUsed]}));}catch{}}
 function load(i){if(!isUnlocked(i,completed,levels.length))i=unlockedThrough(completed,levels.length);level=i;navPage=Math.floor(i/20);state=attempts[i]?.state||initial(i);used=attempts[i]?.used||0;failed=false;history=Array.isArray(attempts[i]?.history)?attempts[i].history:[];selected=null;hinted=null;persist();render();say('Select a part, then slide it along its track.');}
 let activeScreen='collection';
 function showScreen(name){
@@ -51,7 +51,7 @@ function prepareRepair(i){
 function say(t){$('message').textContent=t;}
 function render(){
  $('chapter').textContent=`REPAIR ${String(level+1).padStart(2,'0')} / ${levels.length}`;$('levelName').textContent=levels[level].name;$('rewardIcon').innerHTML=svg(levels[level].icon);
- $('difficulty').textContent=`${(level<20?['Beginner','Apprentice','Craftsperson','Master'][Math.floor(level/5)]:['Expert','Specialist','Virtuoso','Grandmaster'][Math.floor((level-20)/20)])} · ${levels[level].par} minimum slides`;
+ $('difficulty').textContent=`${['Apprentice','Craftsperson','Artisan','Specialist','Expert','Virtuoso','Master','Grandmaster','Inventor','Workshop legend'][Math.min(9,Math.floor(level/20))]} · ${levels[level].par} minimum slides`;
  $('moveCount').textContent=`${used} / ${budget(level)}`;$('undo').disabled=!history.length||failed; $('reset').disabled=resetsUsed.has(level)||failed||used===0;$('resetLabel').textContent=resetsUsed.has(level)?'Reset · 0':'Reset · 1'; $('undoLabel').textContent=`Undo · ${undoBalance}`; $('undoStatus').textContent=`${undoBalance} undos remaining · shared across all levels`;  $('boltBalance').textContent=`⬢ ${bolts} bolts`; $('movesLeft').textContent=`${Math.max(0,budget(level)-used)} moves left`; 
  const start=Math.floor(level/5)*5; $('shelf').innerHTML=levels.slice(start,start+5).map((l,j)=>{const i=start+j;return `<div class="shelf-item ${completed.includes(i)?'':'locked'}" title="${completed.includes(i)?'Restored: ':'Not yet restored: '}${l.reward}" aria-label="${l.reward}, ${completed.includes(i)?'restored':'not yet restored'}">${svg(l.icon)}<span class="item-number">${String(i+1).padStart(2,'0')}</span></div>`}).join('');
  $('continueGame').textContent=`Continue repair ${level+1} →`;
@@ -67,7 +67,7 @@ function move(m){if(failed)return false;if(bolts===0){showShop();return false;}i
  const cost=Math.abs(m.delta),nextState=apply(state,m),outcome=moveOutcome(used,cost,budget(level),won(nextState));
  if(used+cost<=budget(level)){history.push({state,used});state=nextState;}used=Math.min(budget(level),used+cost);hinted=null;rememberAttempt();render();
  if(outcome==='won')finish();else if(outcome==='failed')fail();else say('A little more room. Keep going.');return true;}
-function finish(){delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All 100 treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life.${level+1<levels.length?' Repair '+(level+2)+' is now unlocked.':''}`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
+function finish(){delete attempts[level];if(!completed.includes(level))completed.push(level);persist();render();$('winIcon').innerHTML=svg(levels[level].icon);$('winTitle').textContent=`${levels[level].reward}, restored.`;$('winText').textContent=completed.length===levels.length?`All ${levels.length} treasures have a home. You completed the workshop collection in your own time. Replay any repair to try fewer moves.`:`${used} moves. One lovely thing brought back to life.${level+1<levels.length?' Repair '+(level+2)+' is now unlocked.':''}`;$('next').textContent=completed.length===levels.length?'Play the collection again ↻':'Next repair →';$('winDialog').showModal();}
 function step(sign){if(selected===null)return;move({i:selected,delta:sign});}
 function select(i){selected=i;hinted=null;render();}
 const board=$('board');
