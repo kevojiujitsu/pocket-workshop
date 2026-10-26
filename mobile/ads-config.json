@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "testing": true,
+  "testing": false,
   "androidAppId": "ca-app-pub-3480946078852152~6014620217",
   "iosAppId": "ca-app-pub-3480946078852152~4851254349",
   "androidRewardedId": "ca-app-pub-3480946078852152/5744077340",
