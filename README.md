@@ -6,7 +6,7 @@ A touch-friendly browser prototype for the future iOS and Android game. Real ads
 
 Open the published private Site, or serve `dist` with a static HTTP server. Example: `python -m http.server 8080 --directory dist`, then visit http://localhost:8080 on this computer.
 
-Drag a part along its track with a finger, stylus, or mouse. Blocks follow the pointer and settle into legal grid spaces on release. On-screen movement arrows are removed; keyboard arrow controls remain accessible after selecting a part with Enter. Move the brass kit to the right edge to restore an object. Includes 200 repairs, undo, reset, unlimited hints, and device-local collection progress. The current puzzle restarts when the page reloads. Progress does not sync between devices. External Google Fonts are optional; system fonts work offline.
+Drag a part along its track with a finger, stylus, or mouse. Blocks follow the pointer and settle into legal grid spaces on release. On-screen movement arrows are removed; keyboard arrow controls remain accessible after selecting a part with Enter. Move the brass kit to the right edge to restore an object. Includes 200 repairs, undo, reset, one hint per puzzle, and device-local collection progress. The current puzzle restarts when the page reloads. Progress does not sync between devices. External Google Fonts are optional; system fonts work offline.
 
 ## Verify
 
@@ -33,4 +33,4 @@ Level 1 starts unlocked. Finish every preceding repair to unlock the next one. C
 Each level permits one reset in total, including across retries/reloads. It costs one bolt and does not replenish undos. Confirmed bolt packs: 5 for $0.99, 12 for $1.99, 35 for $4.99 USD. Native purchases are being prepared in mobile/; they are not live.
 
 ## Music and visual themes
-A soft-piano loop plays after the first user gesture at a gentle volume. Music and effects have independent saved switches in Audio settings; music pauses in the background. Wooden slide effects and completion chimes remain synthesized with Web Audio. The bundled track is CC0; see MUSIC-CREDITS.md for its source and license record. No tracking is used. Each of 200 repairs has a distinct coordinated palette and one of five workbench textures. Tool buttons and typography share the workshop visual style.
+A soft-piano loop plays slower, at a gentle volume, for a mellow jazzy feel. Music and effects have independent saved switches in Audio settings; music pauses in the background. Wooden slide effects and completion chimes remain synthesized with Web Audio. The bundled track is CC0; see MUSIC-CREDITS.md for its source and license record. No tracking is used. Each of 200 repairs has a distinct coordinated palette and one of five workbench textures. Tool buttons and typography share the workshop visual style.

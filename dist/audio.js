@@ -1,7 +1,8 @@
 // Recorded, loopable game music with separately synthesized puzzle effects.
 const STORAGE = 'pocket-workshop-audio-v1';
 const MUSIC_SOURCE = new URL('./calm-piano-loop.mp3', import.meta.url).href;
-const MUSIC_VOLUME = 0.35;
+const MUSIC_VOLUME = 0.32;
+const MUSIC_PLAYBACK_RATE = 0.78;
 
 export function readAudioSettings(storage) {
   try {
@@ -42,6 +43,7 @@ export function createWorkshopAudio() {
       musicPlayer.loop = true;
       musicPlayer.preload = 'auto';
       musicPlayer.volume = MUSIC_VOLUME;
+      musicPlayer.playbackRate = MUSIC_PLAYBACK_RATE;
     }
     if (!settings.music || !started || document.hidden) {
       musicPlayer.pause();
