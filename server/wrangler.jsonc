@@ -1,0 +1,12 @@
+{
+ "name":"pocket-workshop-purchases",
+ "main":"worker.js",
+ "compatibility_date":"2026-10-25",
+ "preview_urls":false,
+ "workers_dev":true,
+ "account_id":"aa013857de782f249e2520836850e207",
+ "d1_databases":[{"binding":"DB","database_name":"pocket-workshop-wallet","database_id":"c95df63a-e0e0-4dfd-a31b-e60021eb2956"}],
+ "vars":{"STORE_ENV":"sandbox","PURCHASES_ENABLED":"false","SESSIONS_ENABLED":"false"},
+ "observability":{"enabled":true},
+ "triggers":{"crons":[]}
+}

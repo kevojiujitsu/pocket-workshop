@@ -1,6 +1,19 @@
 # Music asset credit and license
 
-## JRPG Piano
+## Jazz Slower — current background music
+
+- Creator: Alex McCulloch (Pro Sensory)
+- Source: https://opengameart.org/content/jazz-slower
+- License: CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+- Source recording: Jazz Take 2.wav
+- Download: https://opengameart.org/sites/default/files/Jazz%20Take%202.wav
+- Bundled filename: slow-workshop-jazz.mp3
+- Source and license checked: October 26, 2026
+- Adaptation: MP3 encoding at 128 kbps, gentle beginning/end fades, quiet playback at 90% speed with pitch preservation.
+
+The creator lists this instrumental jazz recording as CC0 and welcomes optional credit. It is bundled for in-game background playback. The older piano recording remains available in source history.
+
+## JRPG Piano — previous background music
 
 - Creator: Joth
 - Source: https://opengameart.org/content/jrpg-piano
