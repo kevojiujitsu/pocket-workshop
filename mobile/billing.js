@@ -19,7 +19,7 @@ export async function startBilling(session,onWallet,onStatus){
  store.validator_privacy_policy=['fraud','support'];
  store.register(products.map(p=>({id:p.id,type:ProductType.CONSUMABLE,platform})));
  const appleDelivery=platform===Platform.APPLE_APPSTORE?createPurchaseDelivery(origin,session,onWallet,onStatus):null;
- store.when().approved(transaction=>{if(appleDelivery)appleDelivery.deliver(transaction).catch(error=>onStatus(error.message));else transaction.verify();}).verified(async receipt=>{
+ store.when().pending(()=>onStatus('Apple reports this purchase as pending approval. No credits have been added; do not buy again.')).approved(transaction=>{onStatus('Apple approved the purchase. Verifying delivery…');if(appleDelivery)appleDelivery.deliver(transaction).catch(error=>onStatus(error.message));else transaction.verify();}).verified(async receipt=>{
   if(appleDelivery)return;
   // The validator must verify the store receipt and commit an idempotent ledger
   // grant before it reports success. Never grant credits from an approved event.
@@ -41,6 +41,6 @@ export async function startBilling(session,onWallet,onStatus){
   available:true,
   list:()=>products.map(p=>{const product=store.get(p.id,platform);return {...p,price:product?.pricing?.price,available:!!product?.getOffer()};}),
   buy:async key=>{const p=products.find(p=>p.key===key);if(!p)throw Error('Unknown product.');const offer=store.get(p.id,platform)?.getOffer();if(!offer)throw Error('This product is not currently available.');const error=await offer.order();if(error)throw Error(error.message);},
-  retry:async()=>{await store.update();if(appleDelivery)await appleDelivery.retry();}
+  retry:async()=>{if(appleDelivery){for(const transaction of store.localTransactions)if(transaction.platform===platform&&transaction.state==='approved'&&!transaction.isAcknowledged)await appleDelivery.deliver(transaction);await appleDelivery.retry();}await store.update();if(store.localTransactions.some(transaction=>transaction.platform===platform&&transaction.state==='pending'))throw Error('Apple reports a pending purchase. No credits have been added; do not buy again.');}
  };
 }

@@ -5,7 +5,7 @@ import {STARTING_BOLTS,STARTING_UNDOS,BOLT_PACKS,UNDO_PACKS,spendUndo,spendAttem
 import {levels,initial,moves,apply,solve,won} from '../dist/engine.js';
 const $=id=>document.getElementById(id);
 const wallet=globalThis.PocketWorkshopWallet;
-let billing=null,billingStarting=false,moneyBusy=false;
+let billing=null,billingStarting=false,moneyBusy=false,walletConnection=null;
 const audio=createWorkshopAudio();
 const art={
 lamp:'<path d="M29 25L39 8h12l10 17z" fill="#d8aa54"/><path d="M45 25v37m-16 0h32" stroke="#46685a" stroke-width="5" stroke-linecap="round"/><path d="M32 65h26" stroke="#b88b4d" stroke-width="6"/>',
@@ -220,8 +220,13 @@ $('transitionLevels').onclick=()=>showScreen('collection');
 document.querySelector('.brand').onclick=e=>{e.preventDefault();showScreen('collection');};
 load(level);
 showScreen('collection');
-async function connectWallet(){
- if(!wallet||billingStarting)return;
+function connectWallet(){
+ if(!wallet)return Promise.resolve();
+ if(walletConnection)return walletConnection;
+ walletConnection=syncWalletConnection().finally(()=>{walletConnection=null;});
+ return walletConnection;
+}
+async function syncWalletConnection(){
  billingStarting=true;
  try{
   if(!wallet.connected)await wallet.connect();else await wallet.refresh();
@@ -235,11 +240,11 @@ if(wallet){
  document.querySelector('footer span:last-child').textContent='Progress saved on this device';
  for(const note of $('shopDialog').querySelectorAll('.shop-note'))if(!note.previousElementSibling?.matches('#demoAd'))note.textContent='Payments are processed by Apple. Credits are delivered after purchase verification. Use Wallet access to recover an existing balance.';
  if(wallet.testMode){const note=document.createElement('p');note.textContent='BETA TEST WALLET · Test ads and Apple sandbox purchases. Test balances are separate from the public release.';note.className='shop-note';$('shopDialog').querySelector('h2').after(note);$('demoAd').textContent='Watch a test ad · earn 1 test bolt';}
- const controls=document.createElement('div');controls.innerHTML='<p id="purchaseStatus" aria-live="polite"></p><button type="button" class="text-button" id="syncWallet">Sync wallet</button><button type="button" class="text-button" id="walletAccess">Wallet access & recovery</button>';$('shopDialog').append(controls);
+ const controls=document.createElement('div');controls.innerHTML='<p id="purchaseStatus" aria-live="polite"></p><button type="button" class="text-button" id="syncWallet">Sync wallet</button><button type="button" class="text-button" id="walletAccess">Wallet access & recovery</button>';$('shopBalance').after(controls);
  const access=document.createElement('dialog');access.id='walletDialog';access.innerHTML='<button class="close" id="closeWallet" aria-label="Close wallet access">×</button><h2>Your wallet access</h2><p>Save this private code in a password manager to recover your bolts and undos on another device. Anyone with the code can use this wallet. Puzzle progress stays on this device.</p><label for="recoveryCode">Your wallet access code</label><input id="recoveryCode" readonly style="width:100%;padding:12px" autocomplete="off"><h3>Recover an existing wallet</h3><p>This switches to that wallet. Save your current code before switching.</p><label for="restoreCode">Existing wallet access code</label><input id="restoreCode" style="width:100%;padding:12px" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="primary" id="restoreWallet">Recover wallet</button><p id="walletStatus" aria-live="polite"></p>';document.body.append(access);
  $('closeWallet').onclick=()=>access.close();$('walletAccess').onclick=()=>{$('recoveryCode').value=wallet.recoveryCode();access.showModal();};
  $('restoreWallet').onclick=async()=>{if(moneyBusy||pendingPayment){$('walletStatus').textContent='Sync the pending wallet action first.';return;}if(!confirm('Switch to the wallet for this access code? Save your current code first.'))return;$('restoreWallet').disabled=true;try{await wallet.recover($('restoreCode').value);location.reload();}catch(error){$('walletStatus').textContent=error.message;$('restoreWallet').disabled=false;}};
- $('syncWallet').onclick=()=>connectWallet().catch(error=>shopStatus(error.message));
+ $('syncWallet').onclick=async()=>{const button=$('syncWallet');button.disabled=true;button.textContent='Syncing…';shopStatus('Checking your wallet and unfinished purchases…');try{await connectWallet();shopStatus(`Wallet synced: ${bolts} bolts and ${undoBalance} undos.`);}catch(error){shopStatus(error.message);}finally{button.disabled=false;button.textContent='Sync wallet';}};
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)connectWallet().catch(()=>{});});
  connectWallet().catch(error=>{say(error.message);if($('shopDialog').open)shopStatus(error.message);});
 }
