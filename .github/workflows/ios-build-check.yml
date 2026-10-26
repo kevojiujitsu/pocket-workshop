@@ -41,6 +41,28 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent \
             build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app \
             Pocket-Workshop-iOS-Simulator.zip
+      - name: Capture native simulator launch screenshots
+        run: |
+          mkdir -p ios-screenshots
+          xcrun simctl list devices available --json > devices.json
+          python3 - <<'PY'
+          import json
+          devices=json.load(open('devices.json'))['devices']
+          rows=[d for runtime in sorted(devices,reverse=True) for d in devices[runtime] if d.get('isAvailable')]
+          choices=[next(d for d in rows if 'iPhone' in d['name'] and 'Pro Max' in d['name']),next(d for d in rows if 'iPad Pro' in d['name'] and '13' in d['name'])]
+          with open('capture-devices.tsv','w') as out:
+              for label,device in zip(['iphone','ipad'],choices): out.write(label+'\t'+device['udid']+'\n')
+          PY
+          while IFS=$'\t' read -r label device; do
+            xcrun simctl boot "$device" || true
+            xcrun simctl bootstatus "$device" -b
+            xcrun simctl status_bar "$device" override --time '9:41' --batteryState charged --batteryLevel 100
+            xcrun simctl install "$device" build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app
+            xcrun simctl launch "$device" com.kevthedev.pocketworkshop
+            sleep 8
+            xcrun simctl io "$device" screenshot "ios-screenshots/$label-workshop.png"
+            xcrun simctl shutdown "$device"
+          done < capture-devices.tsv
       - name: Save build result
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,4 +71,5 @@ jobs:
           path: |
             Pocket-Workshop-iOS-Simulator.zip
             ios-build.log
+            ios-screenshots/*.png
           retention-days: 3
