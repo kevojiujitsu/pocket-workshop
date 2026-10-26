@@ -12,6 +12,10 @@ export async function startBilling(session,onWallet,onStatus){
  const origin=new URL(config.verificationOrigin);
  if(origin.protocol!=='https:'||origin.username||origin.password||origin.pathname!=='/')throw Error('A secure verification origin is required.');
  const platform=Capacitor.getPlatform()==='ios'?Platform.APPLE_APPSTORE:Platform.GOOGLE_PLAY;
+ // Wallet IDs are random pseudonymous UUIDs; send this exact identifier to
+ // Google so the authenticated server can enforce ownership. Apple keeps its
+ // existing SDK identifier encoding for unfinished transactions.
+ if(platform===Platform.GOOGLE_PLAY)store.obfuscator='disabled';
  const products=config.products.map(p=>({...p,id:platform===Platform.APPLE_APPSTORE?p.appleId:p.googleId}));
  if(!products.length||products.some(p=>!p.id))throw Error('Store product IDs are missing.');
  store.applicationUsername=()=>session.playerId;

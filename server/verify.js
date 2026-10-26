@@ -28,7 +28,7 @@ export function normalizeGoogle(data,playerId,environment){
  if(data.purchaseStateContext?.purchaseState==='CANCELLED')throw new RevokedPurchase('Purchase cancelled');
  if(data.purchaseStateContext?.purchaseState!=='PURCHASED'||!data.purchaseCompletionTime)throw Error('Purchase is not completed');
  if(data.obfuscatedExternalAccountId!==playerId)throw Error('Purchase belongs to a different player');
- if(!!data.testPurchaseContext!==(environment==='sandbox'))throw Error('Wrong store environment');
+ if(environment!=='auto'&&!!data.testPurchaseContext!==(environment==='sandbox'))throw Error('Wrong store environment');
  if(data.productLineItem?.length!==1)throw Error('Unexpected purchase contents');
  const line=data.productLineItem[0],offer=line.productOfferDetails;
  if(!Number.isSafeInteger(offer?.quantity))throw Error('Missing store quantity');

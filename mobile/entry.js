@@ -3,6 +3,8 @@
 import {startBilling} from './billing.js';
 import {rewardedAds} from './rewarded-ads.js';
 import {nativeWallet} from './native-wallet.js';
+import {Capacitor} from '@capacitor/core';
+window.PocketWorkshopPlatform=Capacitor.getPlatform();
 window.PocketWorkshopBilling={start:startBilling};
 window.PocketWorkshopAds=rewardedAds;
 window.PocketWorkshopWallet=nativeWallet;

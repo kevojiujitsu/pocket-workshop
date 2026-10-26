@@ -29,6 +29,9 @@ assert.equal(database.prepare('SELECT bolts FROM players WHERE id=?').get(id).bo
 assert.throws(()=>database.prepare("INSERT INTO wallet_events VALUES(?,?,'bolts',-35,'refund','proof1',3)").run(crypto.randomUUID(),id));
 const google={purchaseStateContext:{purchaseState:'PURCHASED'},purchaseCompletionTime:new Date().toISOString(),obfuscatedExternalAccountId:id,testPurchaseContext:{fopType:'TEST'},productLineItem:[{productId:BUNDLE_ID+'.bolts5',productOfferDetails:{quantity:1,refundableQuantity:1}}]};
 assert.equal(normalizeGoogle(google,id,'sandbox').quantity,5);
+assert.equal(normalizeGoogle(google,id,'auto').quantity,5,'Release server accepts Google-authoritative license-test purchases');
+assert.equal(normalizeGoogle({...google,testPurchaseContext:undefined},id,'auto').quantity,5,'Release server accepts Google-authoritative production purchases');
+assert.throws(()=>normalizeGoogle(google,crypto.randomUUID(),'auto'),'Auto environment does not relax wallet ownership');
 assert.throws(()=>normalizeGoogle(google,crypto.randomUUID(),'sandbox'));
 assert.throws(()=>normalizeGoogle(google,id,'production'));
 for(const state of ['PENDING','CANCELLED'])assert.throws(()=>normalizeGoogle({...google,purchaseStateContext:{purchaseState:state}},id,'sandbox'));

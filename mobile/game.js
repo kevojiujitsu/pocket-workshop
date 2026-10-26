@@ -5,6 +5,7 @@ import {STARTING_BOLTS,STARTING_UNDOS,BOLT_PACKS,UNDO_PACKS,spendUndo,spendAttem
 import {levels,initial,moves,apply,solve,won} from '../dist/engine.js';
 const $=id=>document.getElementById(id);
 const wallet=globalThis.PocketWorkshopWallet;
+const storeName=globalThis.PocketWorkshopPlatform==='android'?'Google Play':'Apple';
 let billing=null,billingStarting=false,moneyBusy=false,walletConnection=null;
 const audio=createWorkshopAudio();
 const art={
@@ -31,7 +32,7 @@ let pendingPayment=saved.pendingPayment&&['undo','reset','fail'].includes(saved.
 if(wallet){bolts=wallet.balance.bolts;undoBalance=wallet.balance.undos;}
 const budget=i=>levels[i].moveLimit??levels[i].par*4+6;
 function rememberAttempt(){attempts[level]={state,used,history};persist();}
-function shopStatus(text){($('purchaseStatus')||$('shopBalance')).textContent=text;}
+function shopStatus(text){($('purchaseStatus')||$('shopBalance')).textContent=text.replaceAll('Apple',storeName);}
 function renderShop(){
  $('shopBalance').textContent=`You have ${bolts} bolts and ${undoBalance} undos. Each failed repair or reset costs 1 bolt.`;
  $('demoAd').disabled=bolts>=STARTING_BOLTS||!wallet?.connected||!globalThis.PocketWorkshopAds?.available||moneyBusy||!!pendingPayment;
@@ -245,6 +246,7 @@ if(wallet){
  $('closeWallet').onclick=()=>access.close();$('walletAccess').onclick=()=>{$('recoveryCode').value=wallet.recoveryCode();access.showModal();};
  $('restoreWallet').onclick=async()=>{if(moneyBusy||pendingPayment){$('walletStatus').textContent='Sync the pending wallet action first.';return;}if(!confirm('Switch to the wallet for this access code? Save your current code first.'))return;$('restoreWallet').disabled=true;try{await wallet.recover($('restoreCode').value);location.reload();}catch(error){$('walletStatus').textContent=error.message;$('restoreWallet').disabled=false;}};
  $('syncWallet').onclick=async()=>{const button=$('syncWallet');button.disabled=true;button.textContent='Syncing…';shopStatus('Checking your wallet and unfinished purchases…');try{await connectWallet();shopStatus(`Wallet synced: ${bolts} bolts and ${undoBalance} undos.`);}catch(error){shopStatus(error.message);}finally{button.disabled=false;button.textContent='Sync wallet';}};
+ for(const note of $('shopDialog').querySelectorAll('.shop-note'))note.textContent=note.textContent.replaceAll('Apple',storeName);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)connectWallet().catch(()=>{});});
  connectWallet().catch(error=>{say(error.message);if($('shopDialog').open)shopStatus(error.message);});
 }
