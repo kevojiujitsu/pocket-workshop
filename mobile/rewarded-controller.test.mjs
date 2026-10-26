@@ -13,3 +13,13 @@ const disabled=createRewardedController(sdk,{...config,enabled:false},'android')
 assert.equal(createRewardedController(sdk,config,'web').available,false);
 sdk.showRewardVideoAd=async()=>({amount:0});await assert.rejects(ads.watch(),/not completed/);
 console.log('Rewarded ads: completed-only reward, cancellation, consent denial, concurrent requests, disabled/web gating, and invalid rewards pass.');
+let trackingRequests=0,initializations=[];
+const iosSdk={...sdk,trackingAuthorizationStatus:async()=>({status:'notDetermined'}),requestTrackingAuthorization:async()=>{trackingRequests++;},initialize:async options=>initializations.push(options),showRewardVideoAd:async()=>({amount:1})};
+const iosAds=createRewardedController(iosSdk,{...config,iosRewardedId:'ca-app-pub-123/456'},'ios');
+assert.deepEqual(await iosAds.watch(),{bolts:1});
+assert.deepEqual(await iosAds.watch(),{bolts:1});
+assert.equal(trackingRequests,1);assert.equal(initializations.length,1);assert.equal(initializations[0].maxAdContentRating,'General');
+iosSdk.trackingAuthorizationStatus=async()=>({status:'denied'});
+const deniedTracking=createRewardedController(iosSdk,{...config,iosRewardedId:'ca-app-pub-123/456'},'ios');
+assert.deepEqual(await deniedTracking.watch(),{bolts:1});assert.equal(trackingRequests,1);
+console.log('iOS tracking prompt occurs once before initialization; denied tracking does not prevent earned rewards.');

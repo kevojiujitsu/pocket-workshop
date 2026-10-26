@@ -1,0 +1,137 @@
+name: iOS TestFlight build
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pocket-workshop-testflight
+  cancel-in-progress: false
+jobs:
+  testflight:
+    runs-on: macos-15
+    timeout-minutes: 25
+    env:
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_P12_BASE64: ${{ secrets.APPLE_P12_BASE64 }}
+      APPLE_P12_PASSWORD: ${{ secrets.APPLE_P12_PASSWORD }}
+      APPLE_PROFILE_BASE64: ${{ secrets.APPLE_PROFILE_BASE64 }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_PRIVATE_KEY_BASE64: ${{ secrets.ASC_PRIVATE_KEY_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Select Xcode and prepare app
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          cd mobile
+          npm ci
+          node rewarded-controller.test.mjs
+          npm run build
+          npx cap sync ios
+      - name: Install signing materials in temporary runner storage
+        run: |
+          python3 - <<'PY'
+          import os,base64,pathlib,plistlib,subprocess
+          required=['APPLE_TEAM_ID','APPLE_P12_BASE64','APPLE_P12_PASSWORD','APPLE_PROFILE_BASE64','ASC_KEY_ID','ASC_ISSUER_ID','ASC_PRIVATE_KEY_BASE64']
+          if any(not os.environ.get(k) for k in required): raise SystemExit('Required signing/upload secrets are not configured.')
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])
+          for key,name in [('APPLE_P12_BASE64','signing.p12'),('APPLE_PROFILE_BASE64','app.mobileprovision')]:
+              (root/name).write_bytes(base64.b64decode(os.environ[key],validate=True))
+          private=root/'private_keys';private.mkdir(exist_ok=True)
+          (private/('AuthKey_'+os.environ['ASC_KEY_ID']+'.p8')).write_bytes(base64.b64decode(os.environ['ASC_PRIVATE_KEY_BASE64'],validate=True))
+          profile=plistlib.loads(subprocess.check_output(['security','cms','-D','-i',str(root/'app.mobileprovision')]))
+          destination=pathlib.Path.home()/'Library/MobileDevice/Provisioning Profiles';destination.mkdir(parents=True,exist_ok=True)
+          (destination/(profile['UUID']+'.mobileprovision')).write_bytes((root/'app.mobileprovision').read_bytes())
+          options={'method':'app-store-connect','signingStyle':'manual','teamID':os.environ['APPLE_TEAM_ID'],'provisioningProfiles':{'com.kevthedev.pocketworkshop':profile['UUID']},'uploadSymbols':True}
+          (root/'ExportOptions.plist').write_bytes(plistlib.dumps(options))
+          with open(os.environ['GITHUB_ENV'],'a') as env: env.write('PROFILE_UUID='+profile['UUID']+'\n')
+          PY
+          keychain="$RUNNER_TEMP/pocket-signing.keychain-db"
+          keychain_password="$(openssl rand -hex 24)"
+          echo "::add-mask::$keychain_password"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$RUNNER_TEMP/signing.p12" -P "$APPLE_P12_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+          security set-key-partition-list -S apple-tool:,apple: -k "$keychain_password" "$keychain"
+          security list-keychains -d user -s "$keychain" login.keychain-db
+      - name: Configure App target signing
+        run: |
+          ruby - <<'RUBY'
+          require 'xcodeproj'
+          project=Xcodeproj::Project.open('mobile/ios/App/App.xcodeproj')
+          project.targets.find{|target| target.name=='App'}.build_configurations.each do |config|
+            config.build_settings['DEVELOPMENT_TEAM']=ENV.fetch('APPLE_TEAM_ID')
+            config.build_settings['CODE_SIGN_STYLE']='Manual'
+            config.build_settings['CODE_SIGN_IDENTITY']='Apple Distribution'
+            config.build_settings['PROVISIONING_PROFILE_SPECIFIER']=ENV.fetch('PROFILE_UUID')
+            config.build_settings['CURRENT_PROJECT_VERSION']=ENV.fetch('GITHUB_RUN_NUMBER')
+          end
+          project.save
+          RUBY
+      - name: Archive and export
+        run: |
+          set -o pipefail
+          xcodebuild -project mobile/ios/App/App.xcodeproj -scheme App \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath build/PocketWorkshop.xcarchive archive 2>&1 | tee ios-archive.log
+          xcodebuild -exportArchive -archivePath build/PocketWorkshop.xcarchive \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath build/export
+      - name: Upload build to App Store Connect
+        run: |
+          ipa="$(find "$GITHUB_WORKSPACE/build/export" -maxdepth 1 -name '*.ipa' -print -quit)"
+          test -n "$ipa"
+          cd "$RUNNER_TEMP"
+          xcrun altool --upload-app --type ios --file "$ipa" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project mobile/ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-simulator \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee ios-build.log
+      - name: Capture native simulator launch screenshots
+        run: |
+          mkdir -p ios-screenshots
+          xcrun simctl list devices available --json > devices.json
+          python3 - <<'PY'
+          import json
+          devices=json.load(open('devices.json'))['devices']
+          rows=[d for runtime in sorted(devices,reverse=True) for d in devices[runtime] if d.get('isAvailable')]
+          choices=[next(d for d in rows if 'iPhone' in d['name'] and 'Pro Max' in d['name']),next(d for d in rows if 'iPad Pro' in d['name'] and '13' in d['name'])]
+          with open('capture-devices.tsv','w') as out:
+              for label,device in zip(['iphone','ipad'],choices): out.write(label+'\t'+device['udid']+'\n')
+          PY
+          while IFS=$'\t' read -r label device; do
+            xcrun simctl boot "$device" || true
+            xcrun simctl bootstatus "$device" -b
+            xcrun simctl status_bar "$device" override --time '9:41' --batteryState charged --batteryLevel 100
+            xcrun simctl install "$device" build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app
+            xcrun simctl launch "$device" com.kevthedev.pocketworkshop
+            sleep 8
+            xcrun simctl io "$device" screenshot "ios-screenshots/$label-workshop.png"
+            xcrun simctl shutdown "$device"
+          done < capture-devices.tsv
+      - name: Save build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocket-workshop-testflight-log
+          path: |
+            ios-archive.log
+            ios-build.log
+            ios-screenshots/*.png
+          retention-days: 3
+      - name: Remove temporary signing material
+        if: always()
+        run: |
+          security delete-keychain "$RUNNER_TEMP/pocket-signing.keychain-db" || true
+          rm -f "$RUNNER_TEMP/signing.p12" "$RUNNER_TEMP/app.mobileprovision"
+          rm -f "$RUNNER_TEMP/private_keys/AuthKey_$ASC_KEY_ID.p8"
+

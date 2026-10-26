@@ -8,7 +8,14 @@ export function createRewardedController(sdk, config, platform) {
   let info=await sdk.requestConsentInfo();
   if(info.isConsentFormAvailable&&info.status==='REQUIRED')info=await sdk.showConsentForm();
   if(!info.canRequestAds)throw Error('Ads are unavailable with the current privacy settings.');
-  if(!initialized){await sdk.initialize({initializeForTesting:config.testing===true});initialized=true;}
+  if(!initialized){
+   if(platform==='ios'){
+    const tracking=await sdk.trackingAuthorizationStatus();
+    if(tracking.status==='notDetermined')await sdk.requestTrackingAuthorization();
+   }
+   await sdk.initialize({initializeForTesting:config.testing===true,maxAdContentRating:'General'});
+   initialized=true;
+  }
  }
  return {
   available,
