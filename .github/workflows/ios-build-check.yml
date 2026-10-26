@@ -28,6 +28,14 @@ jobs:
           node rewarded-controller.test.mjs
           npm run build
           npx cap sync ios
+      - name: Add simulator-only screenshot navigation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          page=Path('mobile/ios/App/App/public/index.html')
+          driver='<script>setTimeout(()=>document.getElementById("continueGame").click(),11000);setTimeout(()=>document.getElementById("beginRepair").click(),14000);</script>'
+          page.write_text(page.read_text().replace('</body>',driver+'</body>'))
+          PY
       - name: Build for iOS Simulator
         run: |
           set -o pipefail
@@ -49,7 +57,7 @@ jobs:
           import json
           devices=json.load(open('devices.json'))['devices']
           rows=[d for runtime in sorted(devices,reverse=True) for d in devices[runtime] if d.get('isAvailable')]
-          choices=[next(d for d in rows if 'iPhone' in d['name'] and 'Pro Max' in d['name']),next(d for d in rows if 'iPad Pro' in d['name'] and '13' in d['name'])]
+          choices=[next(d for d in rows if 'iPhone' in d['name'] and 'Pro' in d['name'] and 'Max' not in d['name']),next(d for d in rows if 'iPad Pro' in d['name'] and '13' in d['name'])]
           with open('capture-devices.tsv','w') as out:
               for label,device in zip(['iphone','ipad'],choices): out.write(label+'\t'+device['udid']+'\n')
           PY
@@ -61,6 +69,8 @@ jobs:
             xcrun simctl launch "$device" com.kevthedev.pocketworkshop
             sleep 8
             xcrun simctl io "$device" screenshot "ios-screenshots/$label-workshop.png"
+            sleep 10
+            xcrun simctl io "$device" screenshot "ios-screenshots/$label-puzzle.png"
             xcrun simctl shutdown "$device"
           done < capture-devices.tsv
       - name: Save build result
