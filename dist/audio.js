@@ -1,7 +1,7 @@
 // Recorded, loopable game music with separately synthesized puzzle effects.
 const STORAGE = 'pocket-workshop-audio-v1';
-const MUSIC_SOURCE = new URL('./cozy-puzzle-in-game-1.mp3', import.meta.url).href;
-const MUSIC_VOLUME = 0.42;
+const MUSIC_SOURCE = new URL('./calm-piano-loop.mp3', import.meta.url).href;
+const MUSIC_VOLUME = 0.35;
 
 export function readAudioSettings(storage) {
   try {
