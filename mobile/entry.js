@@ -2,6 +2,9 @@
 // account sign-in, the verification backend, and store products are configured.
 import {startBilling} from './billing.js';
 import {rewardedAds} from './rewarded-ads.js';
+import {nativeWallet} from './native-wallet.js';
 window.PocketWorkshopBilling={start:startBilling};
 window.PocketWorkshopAds=rewardedAds;
-await import('../dist/app.js');
+window.PocketWorkshopWallet=nativeWallet;
+if(nativeWallet){try{await nativeWallet.load();}catch(error){window.PocketWorkshopWalletError=error.message;}}
+await import('./game.js');

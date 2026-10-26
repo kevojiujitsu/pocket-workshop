@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>NSUserTrackingUsageDescription</key>
     <string>Your permission lets our advertising partner measure ads across apps when you choose to watch an ad for a free bolt.</string>
     <key>GADApplicationIdentifier</key>

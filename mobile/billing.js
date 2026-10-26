@@ -1,6 +1,7 @@
 import {Capacitor} from '@capacitor/core';
 import {store,ProductType,Platform} from 'capacitor-plugin-cdv-purchase';
 import config from './billing-config.json';
+import {createPurchaseDelivery} from './purchase-delivery.js';
 
 // The caller must provide an authenticated player session from the backend.
 // No merchant credentials, validation keys, or service-account secrets belong here.
@@ -14,10 +15,12 @@ export async function startBilling(session,onWallet,onStatus){
  const products=config.products.map(p=>({...p,id:platform===Platform.APPLE_APPSTORE?p.appleId:p.googleId}));
  if(!products.length||products.some(p=>!p.id))throw Error('Store product IDs are missing.');
  store.applicationUsername=()=>session.playerId;
- store.validator={url:new URL('/receipts/validate',origin).href,headers:{Authorization:`Bearer ${session.accessToken}`},timeout:20000};
+ if(platform!==Platform.APPLE_APPSTORE)store.validator={url:new URL('/receipts/validate',origin).href,headers:{Authorization:`Bearer ${session.accessToken}`},timeout:20000};
  store.validator_privacy_policy=['fraud','support'];
  store.register(products.map(p=>({id:p.id,type:ProductType.CONSUMABLE,platform})));
- store.when().approved(transaction=>transaction.verify()).verified(async receipt=>{
+ const appleDelivery=platform===Platform.APPLE_APPSTORE?createPurchaseDelivery(origin,session,onWallet,onStatus):null;
+ store.when().approved(transaction=>{if(appleDelivery)appleDelivery.deliver(transaction).catch(error=>onStatus(error.message));else transaction.verify();}).verified(async receipt=>{
+  if(appleDelivery)return;
   // The validator must verify the store receipt and commit an idempotent ledger
   // grant before it reports success. Never grant credits from an approved event.
   try{
@@ -26,7 +29,8 @@ export async function startBilling(session,onWallet,onStatus){
    const wallet=await response.json();
    if(!Number.isSafeInteger(wallet.bolts)||wallet.bolts<0||!Number.isSafeInteger(wallet.undos)||wallet.undos<0)throw Error('Invalid purchase balance.');
    await onWallet(wallet);
-   await receipt.finish();
+   const delivered=new Set(receipt.collection.map(p=>p.transactionId));
+   for(const transaction of receipt.sourceReceipt.transactions)if(delivered.has(transaction.transactionId))await transaction.finish();
    onStatus('Purchase verified and delivered.');
   }catch(error){onStatus(error.message+' Your transaction will be retried.');}
  }).unverified(()=>onStatus('Purchase verification is pending. No credits have been added.'));
@@ -37,6 +41,6 @@ export async function startBilling(session,onWallet,onStatus){
   available:true,
   list:()=>products.map(p=>{const product=store.get(p.id,platform);return {...p,price:product?.pricing?.price,available:!!product?.getOffer()};}),
   buy:async key=>{const p=products.find(p=>p.key===key);if(!p)throw Error('Unknown product.');const offer=store.get(p.id,platform)?.getOffer();if(!offer)throw Error('This product is not currently available.');const error=await offer.order();if(error)throw Error(error.message);},
-  retry:()=>store.update()
+  retry:async()=>{await store.update();if(appleDelivery)await appleDelivery.retry();}
  };
 }

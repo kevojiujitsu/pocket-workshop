@@ -1,6 +1,6 @@
 {
-  "enabled": false,
-  "verificationOrigin": "",
+  "enabled": true,
+  "verificationOrigin": "https://pocket-workshop-purchases.kevojiujitsu.workers.dev",
   "products": [
     {
       "key": "undo_1",

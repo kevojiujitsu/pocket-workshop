@@ -19,13 +19,13 @@ export function createRewardedController(sdk, config, platform) {
  }
  return {
   available,
-  async watch(){
+  async watch(verification){
    if(!available)throw Error('Rewarded ads are still being set up. Please try again later.');
    if(busy)throw Error('An ad is already in progress.');
    busy=true;
    try{
     await consent();
-    await sdk.prepareRewardVideoAd({adId,isTesting:config.testing===true,npa:true});
+    await sdk.prepareRewardVideoAd({adId,isTesting:config.testing===true,npa:true,...(verification?{ssv:{userId:verification.playerId,customData:verification.intentId}}:{})});
     const reward=await sdk.showRewardVideoAd();
     if(!reward||!Number.isFinite(reward.amount)||reward.amount<=0)throw Error('The ad was not completed. No bolt was added.');
     return {bolts:1};

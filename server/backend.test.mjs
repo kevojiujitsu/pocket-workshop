@@ -15,7 +15,7 @@ assert.deepEqual(await (await worker.fetch(request('/wallet'),{DB})).json(),{bol
 const spendId=crypto.randomUUID();
 for(let i=0;i<2;i++)assert.deepEqual(await (await worker.fetch(request('/wallet/spend',{currency:'undos',requestId:spendId}),{DB})).json(),{bolts:5,undos:2});
 for(let i=0;i<2;i++)await worker.fetch(request('/wallet/spend',{currency:'undos',requestId:crypto.randomUUID()}),{DB});
-assert.equal((await worker.fetch(request('/wallet/spend',{currency:'undos',requestId:crypto.randomUUID()}),{DB})).status,503);
+assert.equal((await worker.fetch(request('/wallet/spend',{currency:'undos',requestId:crypto.randomUUID()}),{DB})).status,409);
 assert.equal(database.prepare('SELECT undos FROM players WHERE id=?').get(id).undos,0);
 const insertReceipt=database.prepare("INSERT INTO purchase_receipts VALUES(?,?,'google',?,'bolts',35,'cipher',1,0)");
 insertReceipt.run('proof1',id,BUNDLE_ID+'.bolts35');

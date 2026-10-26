@@ -31,6 +31,10 @@ jobs:
           cd mobile
           npm ci
           node rewarded-controller.test.mjs
+          node purchase-delivery.test.mjs
+          node ../server/backend.test.mjs
+          node ../server/monetization.test.mjs
+          node ../server/catalog.test.mjs
           npm run build
           npx cap sync ios
       - name: Install signing materials in temporary runner storage

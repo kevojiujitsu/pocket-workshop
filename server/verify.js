@@ -39,7 +39,7 @@ export function normalizeGoogle(data,playerId,environment){
 export function normalizeApple(data,playerId,environment,transactionId){
  if(data.bundleId!==BUNDLE_ID||data.transactionId!==transactionId||data.type!=='Consumable')throw Error('Unexpected Apple transaction');
  if(data.appAccountToken?.toLowerCase()!==playerId.toLowerCase())throw Error('Purchase belongs to a different player');
- if(data.environment!==(environment==='sandbox'?'Sandbox':'Production'))throw Error('Wrong store environment');
+ if(environment==='auto'?!['Sandbox','Production'].includes(data.environment):data.environment!==(environment==='sandbox'?'Sandbox':'Production'))throw Error('Wrong store environment');
  if(data.revocationDate||data.revocationReason!==undefined)throw new RevokedPurchase('Purchase revoked');
  if(!data.purchaseDate)throw Error('Invalid Apple purchase');
  if(!Number.isSafeInteger(data.quantity))throw Error('Missing store quantity');
@@ -47,7 +47,7 @@ export function normalizeApple(data,playerId,environment,transactionId){
 }
 export async function verifyPurchase(body,playerId,env,fetcher=fetch){
  const transaction=body.transaction;
- if(!['sandbox','production'].includes(env.STORE_ENV))throw Error('Store environment not configured');
+ if(!['sandbox','production','auto'].includes(env.STORE_ENV))throw Error('Store environment not configured');
  if(transaction?.type==='android-playstore'){
   const proof=transaction.purchaseToken;
   if(typeof proof!=='string'||proof.length<10||proof.length>4096)throw Error('Invalid purchase token');
@@ -58,8 +58,17 @@ export async function verifyPurchase(body,playerId,env,fetcher=fetch){
   // Client JWS is used only to locate a transaction. Its claims never grant credits.
   const id=decodeJWT(transaction.jwsRepresentation).transactionId;
   if(typeof id!=='string'||!/^\d{1,32}$/.test(id))throw Error('Invalid Apple transaction ID');
-  const origin=env.STORE_ENV==='sandbox'?'https://api.storekit-sandbox.apple.com':'https://api.storekit.apple.com';
-  const result=await jsonFetch(`${origin}/inApps/v1/transactions/${id}`,{headers:{Authorization:'Bearer '+await appleAccess(env)}},fetcher);
+  const claimed=decodeJWT(transaction.jwsRepresentation);
+  const environments=env.STORE_ENV==='auto'?(claimed.environment==='Sandbox'?['sandbox','production']:['production','sandbox']):[env.STORE_ENV];
+  let result;
+  for(const environment of environments){
+   const origin=environment==='sandbox'?'https://api.storekit-sandbox.apple.com':'https://api.storekit.apple.com';
+   const response=await fetcher(`${origin}/inApps/v1/transactions/${id}`,{headers:{Authorization:'Bearer '+await appleAccess(env)},signal:AbortSignal.timeout(15000)});
+   if(response.status===404&&environments.length>1)continue;
+   if(!response.ok)throw Error('Apple verification unavailable or transaction invalid');
+   result=await response.json();break;
+  }
+  if(!result)throw Error('Apple transaction not found');
   // Only the response fetched directly from Apple's authenticated HTTPS API is
   // decoded here. Never substitute a client-supplied JWS for this response.
   const trusted=decodeJWT(result.signedTransactionInfo);

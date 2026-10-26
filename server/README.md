@@ -1,9 +1,15 @@
-# Purchase backend — deployed with purchases disabled
+# Pocket Workshop native monetization
 
-`catalog.js` defines the five approved consumable grants on the server. It is not an HTTP endpoint or a receipt verifier. Run `node server/catalog.test.mjs` to check that it matches both native catalogs and rejects unknown products and unsupported quantities.
+Apple billing and wallet/ad backend integration are enabled for the next beta build. `mobile/ads-config.json` still has `testing: true`; beta wallets are isolated from release wallets and cannot be recovered into the release app.
 
-The approved Cloudflare Worker `pocket-workshop-purchases` and D1 database `pocket-workshop-wallet` exist. The backend was deployed with Wrangler on October 26, 2026, version `08a729ca-e157-49db-908a-de32a5cf00e9`. The live `/health` endpoint at https://pocket-workshop-purchases.kevojiujitsu.workers.dev/health confirms `purchasesEnabled:false` and `databaseBound:true`. Both purchases and session creation remain disabled, the store environment is sandbox, preview URLs are disabled, and no cron is configured. Resource identifiers and feature flags are saved in `wrangler.jsonc`.
+The iOS app keeps its wallet access code in the Keychain. The backend stores only its hash. Wallet access/recovery is available in the shop. Puzzle progress remains local. Retry identifiers prevent duplicate debits after interrupted responses. Apple transactions finish individually only after authenticated store verification and wallet delivery.
 
-Local code includes bearer-authenticated device sessions (disabled pending recovery/identity design), an idempotent wallet ledger and spends, store verification, ownership/environment checks, and scheduled refund rechecks. Catalog and backend tests pass. This does not establish live store verification or complete refund notification support.
+Production ad rewards require Google's ECDSA-signed server callback, a matching wallet/ad intent, an allowed ad unit, and a unique transaction. Rewards add one bolt only while the total balance is below five. Google's signed dashboard probe is acknowledged without issuing a reward. Client-confirmed test-ad rewards are accepted only for isolated test wallets. Paid packs can exceed five bolts.
 
-Still required: server secrets, account recovery/identity, signed store refund notifications, native shop/wallet integration, and device sandbox testing. Purchases and session creation remain disabled. Never enable billing merely because local tests pass. Store keys must remain outside Git and be supplied only as server secrets.
+Refund notifications are hints only: `/apple/notifications` looks up an existing receipt and re-fetches its authoritative status from Apple before changing a balance. Hourly rechecks provide a second path. Store outages never count as refunds. Apple sandbox and production API responses are validated; test wallets accept only sandbox purchases.
+
+The authorized Cloudflare Worker is `pocket-workshop-purchases`, bound to D1 `pocket-workshop-wallet`. Apply `schema.sql` for a new DB. Existing installations from the previous schema also need the one-time `wallet-modes.sql` migration. Secrets stay outside Git: APPLE_PRIVATE_KEY, APPLE_KEY_ID, APPLE_ISSUER_ID, LEDGER_KEY, SESSION_SALT.
+
+Verification: `node server/backend.test.mjs`, `node server/monetization.test.mjs`, `node server/catalog.test.mjs`, `node mobile/purchase-delivery.test.mjs`, and `node mobile/rewarded-controller.test.mjs`.
+
+Still required before review submission: native iPad sandbox purchase/cancellation/recovery tests, published UMP messages, final release-mode build and IAP review screenshots. AdMob app approval requires linking the public App Store listing; no-fill is handled without issuing rewards.

@@ -1,5 +1,44 @@
 import UIKit
 import Capacitor
+import Security
+
+@objc(WorkshopViewController)
+class WorkshopViewController: CAPBridgeViewController {
+    override func capacitorDidLoad() { bridge?.registerPluginInstance(WorkshopVaultPlugin()) }
+}
+
+@objc(WorkshopVaultPlugin)
+public class WorkshopVaultPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "WorkshopVaultPlugin"
+    public let jsName = "WorkshopVault"
+    public let pluginMethods: [CAPPluginMethod] = [CAPPluginMethod(name: "load", returnType: CAPPluginReturnPromise), CAPPluginMethod(name: "save", returnType: CAPPluginReturnPromise)]
+    private func query(_ call: CAPPluginCall) -> [String: Any] {
+        let service = call.getString("scope") == "test" ? "com.kevthedev.pocketworkshop.wallet.test" : "com.kevthedev.pocketworkshop.wallet"
+        return [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "wallet"]
+    }
+    @objc func load(_ call: CAPPluginCall) {
+        var search = query(call)
+        search[kSecReturnData as String] = true
+        search[kSecMatchLimit as String] = kSecMatchLimitOne
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(search as CFDictionary, &result)
+        if status == errSecItemNotFound { call.resolve(["value": ""]); return }
+        guard status == errSecSuccess, let data = result as? Data, let value = String(data: data, encoding: .utf8) else { call.reject("Secure wallet storage is unavailable."); return }
+        call.resolve(["value": value])
+    }
+    @objc func save(_ call: CAPPluginCall) {
+        guard let value = call.getString("value"), value.utf8.count <= 16384, let data = value.data(using: .utf8) else { call.reject("Invalid wallet storage value."); return }
+        var status = SecItemUpdate(query(call) as CFDictionary, [kSecValueData as String: data] as CFDictionary)
+        if status == errSecItemNotFound {
+            var item = query(call)
+            item[kSecValueData as String] = data
+            item[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            status = SecItemAdd(item as CFDictionary, nil)
+        }
+        guard status == errSecSuccess else { call.reject("Could not save your wallet securely."); return }
+        call.resolve()
+    }
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

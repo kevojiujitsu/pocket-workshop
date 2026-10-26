@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS players (
  token_hash TEXT NOT NULL UNIQUE,
  created_at INTEGER NOT NULL,
  bolts INTEGER NOT NULL DEFAULT 5,
- undos INTEGER NOT NULL DEFAULT 3
+ undos INTEGER NOT NULL DEFAULT 3,
+ is_test INTEGER NOT NULL DEFAULT 0 CHECK(is_test IN (0,1))
 );
 CREATE TABLE IF NOT EXISTS purchase_receipts (
  proof_key TEXT PRIMARY KEY,
@@ -44,3 +45,19 @@ CREATE TABLE IF NOT EXISTS session_limits (
  count INTEGER NOT NULL,
  expires_at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS ad_intents (
+ id TEXT PRIMARY KEY,
+ player_id TEXT NOT NULL REFERENCES players(id),
+ expires_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ad_rewards (
+ transaction_id TEXT PRIMARY KEY,
+ intent_id TEXT NOT NULL UNIQUE REFERENCES ad_intents(id),
+ player_id TEXT NOT NULL REFERENCES players(id),
+ amount INTEGER NOT NULL CHECK(amount IN (0,1)),
+ created_at INTEGER NOT NULL
+);
+CREATE TRIGGER IF NOT EXISTS apply_ad_reward AFTER INSERT ON ad_rewards
+BEGIN
+ UPDATE players SET bolts=bolts+NEW.amount WHERE id=NEW.player_id;
+END;
