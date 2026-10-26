@@ -148,6 +148,10 @@ export default {
    if(url.pathname==='/receipts/validate'&&request.method==='POST')return reply(request,await validateAndGrant(request,env,id,await bodyJSON(request)));
    return reply(request,{error:'Not found'},404);
   }catch(error){
+   if(url.pathname==='/receipts/validate'){
+    const known=['Apple verification not configured','Apple verification unavailable or transaction invalid','Apple transaction not found','Purchase belongs to a different player','Wrong store environment','Unexpected Apple transaction','Missing store quantity','Invalid Apple transaction ID','Purchase revoked','Invalid Apple purchase'];
+    console.warn('Purchase verification failure category',known.includes(error.message)?error.message:'Other verification or ledger failure');
+   }
    if(String(error.message).includes('INSUFFICIENT_BALANCE'))return reply(request,{error:'Insufficient balance'},409);
    if(error.message==='UNAUTHORIZED')return reply(request,{error:'Unauthorized'},401);
    // Do not leak tokens, upstream store responses, SQL, or secret values.

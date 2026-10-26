@@ -2,6 +2,7 @@
  "name":"pocket-workshop-purchases",
  "main":"worker.js",
  "compatibility_date":"2026-10-25",
+ "compatibility_flags":["nodejs_compat"],
  "preview_urls":false,
  "workers_dev":true,
  "account_id":"aa013857de782f249e2520836850e207",

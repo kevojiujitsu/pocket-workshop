@@ -1,5 +1,6 @@
 import {BUNDLE_ID,catalogGrant} from './catalog.js';
 import {decodeJWT,signJWT,hash} from './crypto.js';
+import {appleAccountToken} from './apple-account-token.js';
 let googleCache,appleCache;
 export class RevokedPurchase extends Error {}
 const now=()=>Math.floor(Date.now()/1000);
@@ -38,7 +39,8 @@ export function normalizeGoogle(data,playerId,environment){
 }
 export function normalizeApple(data,playerId,environment,transactionId){
  if(data.bundleId!==BUNDLE_ID||data.transactionId!==transactionId||data.type!=='Consumable')throw Error('Unexpected Apple transaction');
- if(data.appAccountToken?.toLowerCase()!==playerId.toLowerCase())throw Error('Purchase belongs to a different player');
+ const accountToken=data.appAccountToken?.toLowerCase();
+ if(accountToken!==playerId.toLowerCase()&&accountToken!==appleAccountToken(playerId))throw Error('Purchase belongs to a different player');
  if(environment==='auto'?!['Sandbox','Production'].includes(data.environment):data.environment!==(environment==='sandbox'?'Sandbox':'Production'))throw Error('Wrong store environment');
  if(data.revocationDate||data.revocationReason!==undefined)throw new RevokedPurchase('Purchase revoked');
  if(!data.purchaseDate)throw Error('Invalid Apple purchase');
@@ -65,7 +67,7 @@ export async function verifyPurchase(body,playerId,env,fetcher=fetch){
    const origin=environment==='sandbox'?'https://api.storekit-sandbox.apple.com':'https://api.storekit.apple.com';
    const response=await fetcher(`${origin}/inApps/v1/transactions/${id}`,{headers:{Authorization:'Bearer '+await appleAccess(env)},signal:AbortSignal.timeout(15000)});
    if(response.status===404&&environments.length>1)continue;
-   if(!response.ok)throw Error('Apple verification unavailable or transaction invalid');
+   if(!response.ok){console.warn('Apple verification HTTP status',response.status,'environment',environment);throw Error('Apple verification unavailable or transaction invalid');}
    result=await response.json();break;
   }
   if(!result)throw Error('Apple transaction not found');

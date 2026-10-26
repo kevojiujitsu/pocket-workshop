@@ -3,6 +3,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import worker from './worker.js';
 import {normalizeGoogle,normalizeApple} from './verify.js';
+import {appleAccountToken} from './apple-account-token.js';
 import {BUNDLE_ID} from './catalog.js';
 import {hash,base64url,encryptProof,decryptProof} from './crypto.js';
 const database=new DatabaseSync(':memory:');database.exec(readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
@@ -35,6 +36,10 @@ assert.throws(()=>normalizeGoogle({...google,productLineItem:[{...google.product
 assert.throws(()=>normalizeGoogle({...google,productLineItem:[{...google.productLineItem[0],productOfferDetails:{}}]},id,'sandbox'));
 const apple={bundleId:BUNDLE_ID,transactionId:'123',type:'Consumable',appAccountToken:id,environment:'Sandbox',purchaseDate:Date.now(),productId:BUNDLE_ID+'.undo3',quantity:1};
 assert.equal(normalizeApple(apple,id,'sandbox','123').quantity,3);
+assert.equal(appleAccountToken('abc'),'90015098-3cd2-3fb0-8696-3f7d28e17f72','Match the SDK md5toUUID format, including forced version and variant');
+assert.equal(normalizeApple({...apple,appAccountToken:appleAccountToken(id)},id,'sandbox','123').quantity,3,'SDK-obfuscated owner receives the purchase');
+assert.throws(()=>normalizeApple({...apple,appAccountToken:appleAccountToken(crypto.randomUUID())},id,'sandbox','123'),/different player/,'Another wallet cannot claim the receipt');
+assert.throws(()=>normalizeApple({...apple,appAccountToken:undefined},id,'sandbox','123'),/different player/,'Missing ownership remains invalid');
 for(const bad of [{revocationDate:1},{bundleId:'wrong'},{appAccountToken:crypto.randomUUID()},{transactionId:'456'},{quantity:undefined},{environment:'Production'}])assert.throws(()=>normalizeApple({...apple,...bad},id,'sandbox','123'));
 const secret=base64url(crypto.getRandomValues(new Uint8Array(32))),encrypted=await encryptProof('private-purchase-token',secret);
 assert(!encrypted.includes('private-purchase-token'));assert.equal(await decryptProof(encrypted,secret),'private-purchase-token');
