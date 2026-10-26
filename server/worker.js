@@ -1,5 +1,6 @@
 import {hash,base64url,encryptProof,decryptProof} from './crypto.js';
 import {verifyPurchase,RevokedPurchase} from './verify.js';
+import {publicPage} from './public-pages.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const allowedOrigins=new Set(['capacitor://localhost','https://localhost','http://localhost']);
 function reply(request,value,status=200){
@@ -88,6 +89,7 @@ export default {
  },
  async fetch(request,env){
   const url=new URL(request.url);
+  if(request.method==='GET'){const page=publicPage(url.pathname);if(page)return page;}
   if(request.method==='OPTIONS')return reply(request,{},204);
   const origin=request.headers.get('Origin');if(origin&&!allowedOrigins.has(origin))return reply(request,{error:'Origin not allowed'},403);
   try{

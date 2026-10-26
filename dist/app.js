@@ -141,7 +141,36 @@ $('boltBalance').onclick=showShop;
 $('closeShop').onclick=()=>$('shopDialog').close();
 $('demoAd').onclick=()=>{$('adDialog').showModal();};
 $('cancelAd').onclick=()=>$('adDialog').close();
-$('completeAd').onclick=()=>{bolts=rewardBolt(bolts);persist();if(failed)load(level);else render();$('adDialog').close();$('shopDialog').close();say('Demo reward: 1 bolt added. No real ad was shown; no revenue was earned.');};
+let adInProgress=false;
+$('completeAd').onclick=async()=>{
+ if(adInProgress||bolts>=STARTING_BOLTS)return;
+ adInProgress=true;$('completeAd').disabled=true;$('cancelAd').disabled=true;
+ try{
+  if(globalThis.PocketWorkshopAds){
+   const reward=await globalThis.PocketWorkshopAds.watch();
+   if(reward?.bolts!==1)throw Error('No reward was confirmed.');
+  }
+  bolts=rewardBolt(bolts);persist();if(failed)load(level);else render();
+  $('adDialog').close();$('shopDialog').close();
+  say(globalThis.PocketWorkshopAds?'Ad completed. 1 free bolt added.':'Demo reward: 1 bolt added. No real ad was shown; no revenue was earned.');
+ }catch{
+  $('adDialog').close();
+  say('The ad was not completed or is unavailable. No bolt was added. Please try again later.');
+ }finally{adInProgress=false;$('completeAd').disabled=false;$('cancelAd').disabled=false;}
+};
+if(globalThis.PocketWorkshopAds){
+ $('demoAd').textContent='Watch an ad · earn 1 free bolt';
+ const adDialog=$('adDialog');
+ adDialog.querySelector('.eyebrow').textContent='OPTIONAL REWARDED AD';
+ adDialog.querySelector('h2').textContent='One ad. One free bolt.';
+ adDialog.querySelector('p').textContent='Choose to watch an ad to earn 1 bolt. Complete the ad to receive your reward. Free rewards refill your jar up to 5 bolts.';
+ $('completeAd').textContent='Watch ad & earn 1 bolt';
+ const adNote=$('demoAd').nextElementSibling;
+ adNote.textContent='Optional ads earn 1 free bolt after completion, up to 5 bolts. If no ad is available, no reward is issued.';
+ const privacy=document.createElement('button');privacy.type='button';privacy.className='text-button';privacy.textContent='Ad privacy choices';
+ privacy.onclick=async()=>{try{await globalThis.PocketWorkshopAds.privacy();}catch{say('Ad privacy options are unavailable right now.');}};
+ $('audioDialog').append(privacy);
+}
 $('retry').onclick=()=>{$('failDialog').close();load(level);};
 $('failShop').onclick=()=>{$('failDialog').close();showShop();};
 $('closeFail').onclick=()=>{$('failDialog').close();showScreen('collection');};

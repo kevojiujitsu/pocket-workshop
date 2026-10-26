@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {createRewardedController} from './rewarded-controller.js';
+const config={enabled:true,testing:true,androidRewardedId:'ca-app-pub-123/456'};
+let shown=0,allowed=true,complete=true,release;
+const sdk={requestConsentInfo:async()=>({canRequestAds:allowed}),initialize:async()=>{},prepareRewardVideoAd:async()=>{},showRewardVideoAd:async()=>{shown++;if(release)await new Promise(r=>{release=r;});if(!complete)throw Error('dismissed');return {amount:1,type:'bolt'};},showPrivacyOptionsForm:async()=>{}};
+const ads=createRewardedController(sdk,config,'android');
+assert.deepEqual(await ads.watch(),{bolts:1});
+complete=false;await assert.rejects(ads.watch(),/dismissed/);
+allowed=false;const before=shown;await assert.rejects(ads.watch(),/privacy/);assert.equal(shown,before);
+allowed=true;complete=true;release=true;const first=ads.watch();
+await new Promise(r=>setTimeout(r,0));await assert.rejects(ads.watch(),/already/);release();await first;
+const disabled=createRewardedController(sdk,{...config,enabled:false},'android');await assert.rejects(disabled.watch(),/set up/);
+assert.equal(createRewardedController(sdk,config,'web').available,false);
+sdk.showRewardVideoAd=async()=>({amount:0});await assert.rejects(ads.watch(),/not completed/);
+console.log('Rewarded ads: completed-only reward, cancellation, consent denial, concurrent requests, disabled/web gating, and invalid rewards pass.');

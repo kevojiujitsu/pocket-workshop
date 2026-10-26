@@ -40,3 +40,17 @@ The web game is published as Site version 16. The Android app bundle `pocket-wor
 ## Backend checkpoint (October 26, 2026)
 The Cloudflare purchase backend is deployed at https://pocket-workshop-purchases.kevojiujitsu.workers.dev. Its health check confirms the DB binding and disabled purchases. Session creation is disabled, STORE_ENV is sandbox, preview URLs are disabled, and no refund cron is enabled. Store secrets, identity/recovery, signed refund notifications, native wallet wiring, and device purchase testing remain unfinished. This checkpoint supersedes earlier statements that no backend exists. Purchases remain disabled.
 
+## Store and rewarded-ad checkpoint (October 26, 2026)
+
+Owner confirmed that purchases must be finished before launch and that optional completed rewarded ads earn 1 free bolt, capped at 5 bolts. Paid packs remain separate. Do not submit the prototype or remove the agreed monetization to accelerate submission.
+
+Both store description drafts have been saved. Google Play's dashboard explicitly requires a closed test with at least 12 opted-in testers for 14 continuous days; currently 0 testers are opted in. Store screenshots, public support/privacy URLs, content declarations, and review metadata remain unfinished. The owner has a tablet; no Mac/Xcode or cloud Mac build route has been established.
+
+AdMob Android app 6014620217 and iOS app 4851254349 have been created with one optional Rewarded placement each, reward amount 1, item bolt. IDs are recorded in ads-config.json and native application metadata. AdMob reports account verification pending. UMP privacy messages, audience settings, app-ads.txt/domain setup where required, app-store linking, and device ad tests remain pending. ads-config.json stays disabled and in testing mode; do not enable live requests before setup and device checks.
+
+The Capacitor AdMob 8.2.0 integration and native-only reward flow are implemented. Native builds never use the browser demo button to grant a reward. Completion, dismissal, consent denial, repeated requests, disabled configuration, and invalid reward behavior pass controller tests. Android assembleDebug succeeds with the SDK; Android/iOS web assets and plugin references are synced. The iOS native project has not been compiled. The older signed 1.1 AAB predates this integration and the latest jazz recording; do not upload it as the final release.
+
+APPLE_PRIVATE_KEY, APPLE_KEY_ID, and APPLE_ISSUER_ID are installed on pocket-workshop-purchases as Cloudflare secrets with owner authorization. An Apple sandbox probe with a deliberately nonexistent transaction returns HTTP 400; this is not an end-to-end purchase test.
+
+Owner authorized replacing the missing Google key, revoking the old key ending c450, and installing Google/Apple server secrets. Google created replacement key db6b243832eca935f750f5c2eea5ca490dd810b7 and reports download filename pocket-workshop-512605-db6b243832ec.json. Browser download capture timed out, and the file was not found in checked Downloads, task workspace, OpenAI local app data, Temp, or Roaming paths. Do not generate another replacement. The old-key deletion was confirmed by Google's deletion notification. The new Google key is NOT installed on Cloudflare; obtain the downloaded file first. Neither store's purchases are enabled.
+

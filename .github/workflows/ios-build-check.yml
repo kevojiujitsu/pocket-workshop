@@ -1,0 +1,52 @@
+name: iOS build check
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pocket-workshop-ios-check
+  cancel-in-progress: false
+jobs:
+  ios-check:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
+      - name: Build and sync mobile web assets
+        working-directory: mobile
+        run: |
+          npm ci
+          node rewarded-controller.test.mjs
+          npm run build
+          npx cap sync ios
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project mobile/ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-simulator \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee ios-build.log
+      - name: Package simulator app
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/ios-simulator/Build/Products/Debug-iphonesimulator/App.app \
+            Pocket-Workshop-iOS-Simulator.zip
+      - name: Save build result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocket-workshop-ios-check
+          path: |
+            Pocket-Workshop-iOS-Simulator.zip
+            ios-build.log
+          retention-days: 3
