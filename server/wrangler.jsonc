@@ -5,9 +5,8 @@
  "compatibility_flags":["nodejs_compat"],
  "preview_urls":false,
  "workers_dev":true,
- "account_id":"aa013857de782f249e2520836850e207",
  "d1_databases":[{"binding":"DB","database_name":"pocket-workshop-wallet","database_id":"c95df63a-e0e0-4dfd-a31b-e60021eb2956"}],
- "vars":{"STORE_ENV":"auto","PURCHASES_ENABLED":"true","SESSIONS_ENABLED":"true","ADS_ENABLED":"true","AD_TEST_REWARDS_ENABLED":"true"},
+ "vars":{"APP_ENV":"production","TEST_MODE_ENABLED":"false","AD_TEST_REWARDS_ENABLED":"false","STORE_ENV":"auto","PURCHASES_ENABLED":"true","SESSIONS_ENABLED":"true","ADS_ENABLED":"true"},
  "observability":{"enabled":true},
  "triggers":{"crons":["17 * * * *"]}
 }

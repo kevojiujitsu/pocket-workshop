@@ -12,15 +12,15 @@ export function createWalletClient(storage,origin,fetcher=fetch,options={}){
  async function update(value){if(!validWallet(value))throw Error('Invalid wallet response.');record.wallet=value;await save();listener(value);return value;}
  function serial(action){const work=queue.then(action);queue=work.catch(()=>{});return work;}
  const client={
-  get available(){return true;},get testMode(){return options.testMode===true;},get connected(){return connected;},get playerId(){return record?.playerId;},get session(){return record?.playerId?{playerId:record.playerId,accessToken:record.accessToken}:null;},get balance(){return record?.wallet||{bolts:0,undos:0};},get pendingSpend(){return record?.pendingSpend;},
+  get available(){return true;},get testMode(){return record?.testMode===true;},get connected(){return connected;},get playerId(){return record?.playerId;},get session(){return record?.playerId?{playerId:record.playerId,accessToken:record.accessToken}:null;},get balance(){return record?.wallet||{bolts:0,undos:0};},get pendingSpend(){return record?.pendingSpend;},
   onChange(fn){listener=fn;},
   async load(){const saved=await storage.load();if(saved.value){try{record=JSON.parse(saved.value);}catch{throw Error('Wallet storage could not be read. Restore your wallet access code.');}if(!validCode(record.accessToken)||!validWallet(record.wallet))throw Error('Wallet storage is invalid. Restore your wallet access code.');}else{const bytes=crypto.getRandomValues(new Uint8Array(32));const code=btoa(String.fromCharCode(...bytes)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');record={accessToken:code,wallet:{bolts:0,undos:0}};await save();}return record.wallet;},
   connect:()=>serial(async()=>{
    if(!record)await client.load();
    const data=await request(record.playerId?'/session/recover':'/session',record.playerId?{}:{accessToken:record.accessToken,testMode:options.testMode===true});
-   if(!!data.testMode!==(options.testMode===true))throw Error('Test wallets and release wallets are separate. Use the matching wallet access code.');
+   if(data.testMode===true&&options.testMode!==true)throw Error('Test wallets and release wallets are separate. Use the matching wallet access code.');
    if(typeof data.playerId!=='string'||!validWallet(data.wallet))throw Error('Invalid session response.');
-   record.playerId=data.playerId;connected=true;await update(data.wallet);return client.session;
+   record.playerId=data.playerId;record.testMode=data.testMode===true;connected=true;await update(data.wallet);return client.session;
   }),
   refresh:()=>serial(async()=>{const value=await request('/wallet');connected=true;return update(value);}),
   spend:(currency,requestId)=>serial(async()=>{
@@ -35,12 +35,12 @@ export function createWalletClient(storage,origin,fetcher=fetch,options={}){
    code=code.trim();if(!validCode(code))throw Error('Enter the complete wallet access code.');
    if(record?.pendingSpend)throw Error('Sync the current wallet action before changing wallets.');
    const data=await request('/session/recover',{},code);if(!data.playerId||!validWallet(data.wallet))throw Error('Invalid wallet response.');
-   if(!!data.testMode!==(options.testMode===true))throw Error('Test wallets and release wallets are separate.');
-   record={accessToken:code,playerId:data.playerId,wallet:data.wallet};await save();connected=true;listener(data.wallet);return data.wallet;
+   if(data.testMode===true&&options.testMode!==true)throw Error('Test wallets and release wallets are separate.');
+   record={accessToken:code,playerId:data.playerId,testMode:data.testMode===true,wallet:data.wallet};await save();connected=true;listener(data.wallet);return data.wallet;
   }),
   async createAdIntent(){const data=await request('/ads/intent',{});if(typeof data.intentId!=='string')throw Error('Ad reward is unavailable.');return {intentId:data.intentId,playerId:record.playerId};},
   async waitForAd(intentId){
-   if(options.testMode===true){const data=await request('/ads/test-complete',{intentId});await update(data.wallet);return {bolts:1,wallet:data.wallet};}
+   if(record?.testMode===true){const data=await request('/ads/test-complete',{intentId});await update(data.wallet);return {bolts:1,wallet:data.wallet};}
    for(let attempt=0;attempt<20;attempt++){
     const data=await request('/ads/status?intentId='+encodeURIComponent(intentId));
     if(data.confirmed){await update(data.wallet);return {bolts:data.amount,wallet:data.wallet};}

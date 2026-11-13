@@ -50,4 +50,8 @@ assert.equal((await worker.fetch(new Request('https://test.invalid/wallet',{meth
 assert.equal((await worker.fetch(new Request('https://test.invalid/health',{headers:{Origin:'https://evil.invalid'}}),{})).status,403);
 assert.equal((await worker.fetch(request('/receipts/validate',{transaction:{}}),{DB})).status,200);
 assert.equal((await (await worker.fetch(request('/receipts/validate',{transaction:{}}),{DB})).json()).ok,false);
+const beforeMissingSalt=database.prepare('SELECT count(*) AS count FROM players').get().count;
+const missingSalt=await worker.fetch(request('/session',{accessToken:base64url(crypto.getRandomValues(new Uint8Array(32)))}),{DB,SESSIONS_ENABLED:'true'});
+assert.equal(missingSalt.status,503,'Session enrollment fails closed when SESSION_SALT is not configured');
+assert.equal(database.prepare('SELECT count(*) AS count FROM players').get().count,beforeMissingSalt);
 console.log('Backend checks pass: authentication, idempotent spends/grants/refunds, insufficient balances, store ownership/environment/pending checks, proof encryption, CORS, disabled purchases.');
