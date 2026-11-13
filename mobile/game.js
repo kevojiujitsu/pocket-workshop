@@ -237,10 +237,21 @@ async function syncWalletConnection(){
  }finally{billingStarting=false;}
 }
 if(wallet){
- wallet.onChange(value=>{bolts=value.bolts;undoBalance=value.undos;persist();render();if($('shopDialog').open)renderShop();});
+ function renderWalletTestMode(){
+  let note=$('shopDialog').querySelector('.test-wallet-note');
+  if(wallet.testMode){
+   if(!note){note=document.createElement('p');note.className='shop-note test-wallet-note';$('shopDialog').querySelector('h2').after(note);}
+   note.textContent='BETA TEST WALLET · Test ads and Apple sandbox purchases. Test balances are separate from the public release.';
+   $('demoAd').textContent='Watch a test ad · earn 1 test bolt';
+  }else{
+   note?.remove();
+   if(globalThis.PocketWorkshopAds)$('demoAd').textContent='Watch an ad · earn 1 free bolt';
+  }
+ }
+ wallet.onChange(value=>{bolts=value.bolts;undoBalance=value.undos;persist();renderWalletTestMode();render();if($('shopDialog').open)renderShop();});
  document.querySelector('footer span:last-child').textContent='Progress saved on this device';
  for(const note of $('shopDialog').querySelectorAll('.shop-note'))if(!note.previousElementSibling?.matches('#demoAd'))note.textContent='Payments are processed by Apple. Credits are delivered after purchase verification. Use Wallet access to recover an existing balance.';
- if(wallet.testMode){const note=document.createElement('p');note.textContent='BETA TEST WALLET · Test ads and Apple sandbox purchases. Test balances are separate from the public release.';note.className='shop-note';$('shopDialog').querySelector('h2').after(note);$('demoAd').textContent='Watch a test ad · earn 1 test bolt';}
+ renderWalletTestMode();
  const controls=document.createElement('div');controls.innerHTML='<p id="purchaseStatus" aria-live="polite"></p><button type="button" class="text-button" id="syncWallet">Sync wallet</button><button type="button" class="text-button" id="walletAccess">Wallet access & recovery</button>';$('shopBalance').after(controls);
  const access=document.createElement('dialog');access.id='walletDialog';access.innerHTML='<button class="close" id="closeWallet" aria-label="Close wallet access">×</button><h2>Your wallet access</h2><p>Save this private code in a password manager to recover your bolts and undos on another device. Anyone with the code can use this wallet. Puzzle progress stays on this device.</p><label for="recoveryCode">Your wallet access code</label><input id="recoveryCode" readonly style="width:100%;padding:12px" autocomplete="off"><h3>Recover an existing wallet</h3><p>This switches to that wallet. Save your current code before switching.</p><label for="restoreCode">Existing wallet access code</label><input id="restoreCode" style="width:100%;padding:12px" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="primary" id="restoreWallet">Recover wallet</button><p id="walletStatus" aria-live="polite"></p>';document.body.append(access);
  $('closeWallet').onclick=()=>access.close();$('walletAccess').onclick=()=>{$('recoveryCode').value=wallet.recoveryCode();access.showModal();};

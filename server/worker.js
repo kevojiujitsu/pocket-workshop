@@ -4,6 +4,7 @@ import {publicPage} from './public-pages.js';
 import {verifyAdCallback,grantAd} from './ads.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const allowedOrigins=new Set(['capacitor://localhost','https://localhost','http://localhost']);
+const testEnvironment=env=>env.APP_ENV==='test'&&env.TEST_MODE_ENABLED==='true';
 function reply(request,value,status=200){
  const origin=request.headers.get('Origin'),headers={'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'};
  if(allowedOrigins.has(origin))Object.assign(headers,{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Allow-Methods':'GET, POST, OPTIONS'});
@@ -20,8 +21,9 @@ async function bodyJSON(request){
 async function player(request,env){
  const token=request.headers.get('Authorization')?.match(/^Bearer ([A-Za-z0-9_-]{43})$/)?.[1];
  if(!token)throw Error('UNAUTHORIZED');
- const row=await env.DB.prepare('SELECT id FROM players WHERE token_hash=?').bind(await hash(token)).first();
- if(!row)throw Error('UNAUTHORIZED');return row.id;
+ const row=await env.DB.prepare('SELECT id,is_test FROM players WHERE token_hash=?').bind(await hash(token)).first();
+ if(!row||(row.is_test&&!testEnvironment(env)))throw Error('UNAUTHORIZED');
+ return row.id;
 }
 async function wallet(env,id){
  const row=await env.DB.prepare('SELECT bolts,undos FROM players WHERE id=?').bind(id).first();
@@ -32,6 +34,7 @@ async function createSession(request,env){
  // Device wallets are disabled until recovery/identity and device sandbox tests
  // are completed. This flag is separate from enabling receipt verification.
  if(env.SESSIONS_ENABLED!=='true'||!env.SESSION_SALT)throw Error('Session setup is not complete');
+ const isTestEnvironment=testEnvironment(env);
  const day=Math.floor(Date.now()/86400000),bucket=await hash(env.SESSION_SALT+':'+day+':'+(request.headers.get('CF-Connecting-IP')||'unknown'));
  await env.DB.prepare('INSERT INTO session_limits(bucket,count,expires_at) VALUES(?,1,?) ON CONFLICT(bucket) DO UPDATE SET count=count+1').bind(bucket,(day+2)*86400).run();
  const limit=await env.DB.prepare('SELECT count FROM session_limits WHERE bucket=?').bind(bucket).first();
@@ -42,16 +45,21 @@ async function createSession(request,env){
  const token=body.accessToken;
  if(typeof token!=='string'||! /^[A-Za-z0-9_-]{43}$/.test(token))throw Error('Invalid wallet access code');
  const tokenHash=await hash(token),existing=await env.DB.prepare('SELECT id,is_test FROM players WHERE token_hash=?').bind(tokenHash).first();
- if(existing)return {playerId:existing.id,accessToken:token,testMode:!!existing.is_test,wallet:await wallet(env,existing.id)};
+ if(existing){
+  if(existing.is_test&&!isTestEnvironment)throw Error('Test wallet unavailable');
+  return {playerId:existing.id,accessToken:token,testMode:!!existing.is_test,wallet:await wallet(env,existing.id)};
+ }
  const id=crypto.randomUUID();
- await env.DB.prepare('INSERT INTO players(id,token_hash,created_at,is_test) VALUES(?,?,?,?) ON CONFLICT(token_hash) DO NOTHING').bind(id,tokenHash,Date.now(),body.testMode===true?1:0).run();
+ await env.DB.prepare('INSERT INTO players(id,token_hash,created_at,is_test) VALUES(?,?,?,?) ON CONFLICT(token_hash) DO NOTHING').bind(id,tokenHash,Date.now(),isTestEnvironment&&body.testMode===true?1:0).run();
  const enrolled=await env.DB.prepare('SELECT id,is_test FROM players WHERE token_hash=?').bind(tokenHash).first();
+ if(enrolled.is_test&&!isTestEnvironment)throw Error('Test wallet unavailable');
  return {playerId:enrolled.id,accessToken:token,testMode:!!enrolled.is_test,wallet:await wallet(env,enrolled.id)};
 }
 function validatedReply(productId,native,transactionId){return {ok:true,data:{id:productId,latest_receipt:true,transaction:native,collection:[{id:productId,transactionId,quantity:1}],date:new Date().toISOString()}};}
 export async function validateAndGrant(request,env,id,body){
  if(env.PURCHASES_ENABLED!=='true'||!env.LEDGER_KEY)throw Error('Purchases are not enabled');
  const account=await env.DB.prepare('SELECT is_test FROM players WHERE id=?').bind(id).first();
+ if(account?.is_test&&!testEnvironment(env))throw Error('Test wallet unavailable');
  const verified=await verifyPurchase(body,id,account?.is_test?{...env,STORE_ENV:'sandbox'}:env);
  const existing=await env.DB.prepare('SELECT player_id,refunded FROM purchase_receipts WHERE proof_key=?').bind(verified.proofKey).first();
  if(existing&&(existing.player_id!==id||existing.refunded))throw Error('Purchase cannot be delivered');
@@ -125,7 +133,7 @@ export default {
     return reply(request,{received:true});
    }
    const id=await player(request,env);
-   if(url.pathname==='/session/recover'&&request.method==='POST'){const account=await env.DB.prepare('SELECT is_test FROM players WHERE id=?').bind(id).first();return reply(request,{playerId:id,testMode:!!account.is_test,wallet:await wallet(env,id)});}
+   if(url.pathname==='/session/recover'&&request.method==='POST'){const account=await env.DB.prepare('SELECT is_test FROM players WHERE id=?').bind(id).first();return reply(request,{playerId:id,testMode:!!account?.is_test,wallet:await wallet(env,id)});}
    if(url.pathname==='/wallet'&&request.method==='GET')return reply(request,await wallet(env,id));
    if(url.pathname==='/wallet/spend'&&request.method==='POST')return reply(request,await spend(env,id,await bodyJSON(request)));
    if(url.pathname==='/ads/intent'&&request.method==='POST'){
@@ -140,7 +148,7 @@ export default {
    }
    if(url.pathname==='/ads/test-complete'&&request.method==='POST'){
     const account=await env.DB.prepare('SELECT is_test FROM players WHERE id=?').bind(id).first();
-    if(env.AD_TEST_REWARDS_ENABLED!=='true'||!account?.is_test)throw Error('Test rewards are not available for this wallet');
+    if(!testEnvironment(env)||env.AD_TEST_REWARDS_ENABLED!=='true'||!account?.is_test)throw Error('Test rewards are not available for this wallet');
     const body=await bodyJSON(request);if(!uuid.test(body.intentId))throw Error('Invalid test reward');
     await grantAd(env,{intentId:body.intentId,playerId:id,transactionId:'test:'+body.intentId},true);
     return reply(request,{wallet:await wallet(env,id)});
